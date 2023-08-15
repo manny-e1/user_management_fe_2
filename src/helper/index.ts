@@ -21,7 +21,11 @@ export function validateNumberInput(input: string) {
 }
 
 export function removeComma(input: string) {
-  return input.replace(/,/g, '');
+  const str = input.replace(/,/g, '');
+  if (!str) {
+    return '0.0';
+  }
+  return str;
 }
 
 export function formatDate(date?: Date) {

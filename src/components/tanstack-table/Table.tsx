@@ -28,8 +28,8 @@ declare module '@tanstack/table-core' {
   }
   interface FilterMeta {
     itemRank?: RankingInfo;
-    requestStatusRank?: RankingInfo,
-    maintenanceStatusRank?: RankingInfo
+    requestStatusRank?: RankingInfo;
+    maintenanceStatusRank?: RankingInfo;
   }
 }
 
@@ -38,7 +38,7 @@ type MaintenanceFilter = {
   toDate: string;
   requestStatus: string;
   maintenanceStatus: string;
-}
+};
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -62,26 +62,39 @@ const statusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 const mntStatusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const g = value as MaintenanceFilter;
-  const {requestStatus, maintenanceStatus, fromDate, toDate} = g;
-  const requestStatusRank = rankItem(row.getValue("approvalStatus"), requestStatus);
-  const maintenanceStatusRank = rankItem(row.getValue("channelStatus"), maintenanceStatus);
+  const { requestStatus, maintenanceStatus, fromDate, toDate } = g;
+  const requestStatusRank = rankItem(
+    row.getValue('approvalStatus'),
+    requestStatus
+  );
+  const maintenanceStatusRank = rankItem(
+    row.getValue('channelStatus'),
+    maintenanceStatus
+  );
 
   const period = row.getValue('period') as string;
   const startDate = new Date(period.split('@')[0]);
   const endDate = new Date(period.split('@')[1]);
 
-  const afterStart = fromDate === '' || (fromDate != '' && startDate >= new Date(fromDate + " 00:00:00"));
-  const beforeEnd = toDate === '' || ( toDate != '' && endDate <= new Date(toDate + " 23:59:59"));
+  const afterStart =
+    fromDate === '' ||
+    (fromDate != '' && startDate >= new Date(fromDate + ' 00:00:00'));
+  const beforeEnd =
+    toDate === '' ||
+    (toDate != '' && endDate <= new Date(toDate + ' 23:59:59'));
 
-  console.log(toDate);
-  
   addMeta({
     requestStatusRank,
-    maintenanceStatusRank
-  })
+    maintenanceStatusRank,
+  });
 
-  return requestStatusRank.passed && maintenanceStatusRank.passed && afterStart && beforeEnd;
-}
+  return (
+    requestStatusRank.passed &&
+    maintenanceStatusRank.passed &&
+    afterStart &&
+    beforeEnd
+  );
+};
 
 export default function Table<T extends { id: string }>({
   data,
@@ -95,7 +108,7 @@ export default function Table<T extends { id: string }>({
   columns: ColumnDef<T>[];
   route: string;
   hide?: boolean;
-  hideUtility?: boolean
+  hideUtility?: boolean;
   onClick?: () => void;
 }) {
   const router = useRouter();
@@ -105,18 +118,28 @@ export default function Table<T extends { id: string }>({
     requestStatus: '',
     maintenanceStatus: '',
     fromDate: '',
-    toDate: ''
+    toDate: '',
   });
-  const isTxnTable = route.includes('transaction')
+  const isTxnTable = route.includes('transaction');
   const isMntTable = route.includes('maintenance');
 
   const table = useReactTable({
     data,
     columns: columns,
-    filterFns: { fuzzy: isTxnTable ? statusFilter : (isMntTable ? mntStatusFilter : fuzzyFilter) },
+    filterFns: {
+      fuzzy: isTxnTable
+        ? statusFilter
+        : isMntTable
+        ? mntStatusFilter
+        : fuzzyFilter,
+    },
     state: { sorting, globalFilter: isMntTable ? mntFilter : globalFilter },
     onGlobalFilterChange: isTxnTable ? setGlobalFilter : setMntFilter,
-    globalFilterFn: isTxnTable ? statusFilter : (isMntTable ? mntStatusFilter : fuzzyFilter),
+    globalFilterFn: isTxnTable
+      ? statusFilter
+      : isMntTable
+      ? mntStatusFilter
+      : fuzzyFilter,
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -128,69 +151,76 @@ export default function Table<T extends { id: string }>({
       <div className="flex justify-between mb-3">
         {isTxnTable ? (
           <FilterStatus onChange={(value) => setGlobalFilter(value)} />
-        ) : (
-          !hideUtility ? (
-            isMntTable ? (
-              <MntFilterStatus
-                onReqChange={(value) => setMntFilter({
+        ) : !hideUtility ? (
+          isMntTable ? (
+            <MntFilterStatus
+              onReqChange={(value) =>
+                setMntFilter({
                   ...mntFilter,
-                  requestStatus: value
-                })}
-                onMntChange={(value) => setMntFilter({
+                  requestStatus: value,
+                })
+              }
+              onMntChange={(value) =>
+                setMntFilter({
                   ...mntFilter,
-                  maintenanceStatus: value
-                })}
-                onFromChange={(value) => setMntFilter({
+                  maintenanceStatus: value,
+                })
+              }
+              onFromChange={(value) =>
+                setMntFilter({
                   ...mntFilter,
-                  fromDate: value
-                })}
-                onToChange={(value) => {
-                  console.log(value);
-                  setMntFilter({
+                  fromDate: value,
+                })
+              }
+              onToChange={(value) => {
+                console.log(value);
+                setMntFilter({
                   ...mntFilter,
-                  toDate: value
-                })}}
+                  toDate: value,
+                });
+              }}
+            />
+          ) : (
+            <>
+              <DebouncedInput
+                route={route}
+                value={globalFilter ?? ''}
+                onChange={(value) => setGlobalFilter(String(value))}
+                className="py-0.5 px-1 border rounded border-black"
               />
-            ) : (
-              <>
-                <DebouncedInput
-                  route={route}
-                  value={globalFilter ?? ''}
-                  onChange={(value) => setGlobalFilter(String(value))}
-                  className="py-0.5 px-1 border rounded border-black"
-                />
-              </>
-            )
-          ) : (<></>)
+            </>
+          )
+        ) : (
+          <></>
         )}
-        <div className='flex items-center gap-2 ms-2'>
-          {
-            !hideUtility ? (
-              <>
+        <div className="flex items-center gap-2 ms-2">
+          {!hideUtility ? (
+            <>
+              <button
+                id="btnExport"
+                onClick={onClick}
+                className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
+              >
+                Export
+              </button>
+              {!hide ? (
                 <button
-                  id="btnExport"
-                  onClick={onClick}
-                  className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
-                >
-                  Export
-                </button>
-                {!hide ? (
-                  <button
                   id="btnSave"
                   onClick={(e) => router.push(route)}
                   className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                 >
                   {isTxnTable ? 'Request' : 'Request'}
                 </button>
-                ) : (
-                  <></>
-                )}
-              </>
-            ) : (<></>)
-          }
+              ) : (
+                <></>
+              )}
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
-      <div className='flex overflow-x-auto overflow-y-hidden scrollbar-thumb-indigo-200 scrollbar-thin scrollbar-thumb-rounded-md scrollbar-track-slate-50'>
+      <div className="flex overflow-x-auto no-scrollbar overflow-y-hidden scrollbar-thumb-indigo-200 scrollbar-thin scrollbar-thumb-rounded-md scrollbar-track-slate-50">
         <table className="w-full border-2 border-solid border-slate-200 no-scrollbar">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -310,18 +340,14 @@ export default function Table<T extends { id: string }>({
   );
 }
 
-function FilterStatus({
-  onChange,
-}: {
-  onChange: (value: string) => void;
-}) {
+function FilterStatus({ onChange }: { onChange: (value: string) => void }) {
   const [status, setStatus] = useState<string>('');
 
   useEffect(() => {
-    if(localStorage.getItem("filter")) {
-      localStorage.removeItem("filter");
-      setStatus("0");
-      onChange("0");
+    if (localStorage.getItem('filter')) {
+      localStorage.removeItem('filter');
+      setStatus('0');
+      onChange('0');
     }
   }, []);
 
@@ -362,89 +388,90 @@ function MntFilterStatus({
     fromDate: '',
     toDate: '',
     requestStatus: '',
-    maintenanceStatus: ''
+    maintenanceStatus: '',
   });
 
   useEffect(() => {
-    if(localStorage.getItem("filter")) {
-      localStorage.removeItem("filter");
+    if (localStorage.getItem('filter')) {
+      localStorage.removeItem('filter');
       setInput({
         ...input,
-        requestStatus: 'Pending'
+        requestStatus: 'Pending',
       });
-      onReqChange("Pending");
+      onReqChange('Pending');
     }
   }, []);
 
   // Handle Events
-  const handleFromDateChange = (value : string) => {
+  const handleFromDateChange = (value: string) => {
     setInput({
       ...input,
-      fromDate: value
+      fromDate: value,
     });
     onFromChange(value);
-  }
+  };
 
-  const handleToDateChange = (value : string) => {
+  const handleToDateChange = (value: string) => {
     setInput({
       ...input,
-      toDate: value
+      toDate: value,
     });
     onToChange(value);
-  }
+  };
 
-  const handleRequestStatusChange = (value : string) => {
+  const handleRequestStatusChange = (value: string) => {
     setInput({
       ...input,
-      requestStatus: value
+      requestStatus: value,
     });
     onReqChange(value);
-  }
+  };
 
-  const handleMaintenanceStatusChange = (value : string) => {
+  const handleMaintenanceStatusChange = (value: string) => {
     setInput({
       ...input,
-      maintenanceStatus: value
+      maintenanceStatus: value,
     });
     onMntChange(value);
-  }
+  };
 
   const handleClearClick = () => {
     setInput({
       ...input,
       fromDate: '',
-      toDate: ''
+      toDate: '',
     });
     onFromChange('');
     onToChange('');
-  }
+  };
 
   return (
     <div className="flex items-center overflow-x-auto scrollbar-thumb-indigo-200 scrollbar-thin scrollbar-thumb-rounded-md scrollbar-track-slate-50 gap-2">
-      <div className='flex items-center'>
-        <span className='inline-block'>From Date:</span>
+      <div className="flex items-center">
+        <span className="inline-block">From Date:</span>
         <input
-          type='date'
-          className='form-control'
+          type="date"
+          className="form-control"
           value={input.fromDate}
-          onChange={e => handleFromDateChange(e.target.value)}
+          onChange={(e) => handleFromDateChange(e.target.value)}
         />
       </div>
 
-      <div className='flex items-center'>
-        <span className='inline-block'>To Date:</span>
+      <div className="flex items-center">
+        <span className="inline-block">To Date:</span>
         <input
-          type='date'
-          className='form-control'
+          type="date"
+          className="form-control"
           value={input.toDate}
-          onChange={e => handleToDateChange(e.target.value)}
+          onChange={(e) => handleToDateChange(e.target.value)}
         />
       </div>
 
-      <div className='flex items-center'>
+      <div className="flex items-center">
         <button
-          className='text-white bg-gray-900 rounded-[0.2rem] px-[0.85rem] py-1 active:bg-gray-700'
-          onClick={() => handleClearClick()}>
+          className="text-white bg-gray-900 rounded-[0.2rem] px-[0.85rem] py-1 active:bg-gray-700"
+          onClick={() => handleClearClick()}
+        >
           Clear
         </button>
       </div>
@@ -495,9 +522,9 @@ function DebouncedInput({
 
   useEffect(() => {
     setValue(initialValue);
-    if(localStorage.getItem("filter")) {
-      localStorage.removeItem("filter");
-      setValue("locked");
+    if (localStorage.getItem('filter')) {
+      localStorage.removeItem('filter');
+      setValue('locked');
     }
   }, [initialValue]);
 

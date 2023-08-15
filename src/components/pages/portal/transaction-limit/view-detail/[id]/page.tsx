@@ -142,7 +142,7 @@ export default function ViewTransactionPage() {
 
   const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'Transation Limit' }];
   return (
-    <div className="p-4">
+    <div className="p-4 overflow-y-scroll">
       <BreadCrumbs breadCrumbs={breadCrumbs} />
       <Section outerTitle="OBW Transaction Limit Maintenance" innerTitle="">
         <span className="flex justify-end mt-[-2rem] mb-8 text-sm">

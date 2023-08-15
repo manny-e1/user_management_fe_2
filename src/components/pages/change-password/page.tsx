@@ -50,15 +50,6 @@ export default function ChangePasswordPage() {
 
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
-    let pwdReg =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    if (!pwdReg.test(password)) {
-      setErr(
-        'must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters'
-      );
-      return;
-    }
     if (password !== confirmPassword) {
       setErr("passwords doesn't match");
       return;
@@ -73,10 +64,24 @@ export default function ChangePasswordPage() {
   };
 
   useEffect(() => {
-    if (!token || (checkTokenQry.data && 'error' in checkTokenQry.data)) {
+    if (!token) {
       redirect('/link-expired');
+    } else if (checkTokenQry.data && 'error' in checkTokenQry.data) {
+      if (checkTokenQry.data.error.includes('found')) {
+        redirect('/user-not-found');
+      } else {
+        redirect('/link-expired');
+      }
     }
   }, [token, checkTokenQry.data]);
+
+  if (
+    checkTokenQry.isLoading ||
+    !token ||
+    (checkTokenQry.data && 'error' in checkTokenQry.data)
+  ) {
+    return null;
+  }
 
   return (
     <main className="flex flex-col pt-4 md:w-full  bg-forgotten items-center  h-screen">
@@ -117,13 +122,6 @@ export default function ChangePasswordPage() {
           </div>
 
           <div className="flex justify-center items-center mt-3">
-            <Link
-              href="/login"
-              className="px-4 py-2.5 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 rounded font-normal text-lg text-white bg-gray-500 hover:bg-gray-600 mr-2"
-              aria-disabled={resetPwdMut.isLoading}
-            >
-              Cancel
-            </Link>
             <button
               type="submit"
               id="≈btnSubmitForgotEmail"

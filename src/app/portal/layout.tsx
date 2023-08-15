@@ -11,7 +11,7 @@ export default function RootLayout({
     <div className="flex">
       <SessionTimeout />
       <Sidebar />
-      <main className="flex-grow overflow-x-hidden no-scrollbar bg-[#f5f7fb] h-screen bg-forgotten">
+      <main className="flex-grow overflow-x-hidden  bg-[#f5f7fb] h-screen bg-forgotten">
         <Topbar />
         {children}
       </main>

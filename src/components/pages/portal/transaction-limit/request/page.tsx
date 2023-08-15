@@ -69,16 +69,16 @@ export default function RequestTransactionPage() {
         setNCIB(formatCurrency(txnLog.nCIB));
         setNCMB(formatCurrency(txnLog.nCMB));
       } else {
-        setNRIB("50,000.00");
-        setNRMB("50,000.00");
-        setNCIB("100,000.00");
-        setNCMB("100,000.00");
+        setNRIB('50,000.00');
+        setNRMB('50,000.00');
+        setNCIB('10,000,000.00');
+        setNCMB('10,000,000.00');
       }
     } else {
-      setNRIB("50,000.00");
-      setNRMB("50,000.00");
-      setNCIB("100,000.00");
-      setNCMB("100,000.00");
+      setNRIB('50,000.00');
+      setNRMB('50,000.00');
+      setNCIB('10,000,000.00');
+      setNCMB('10,000,000.00');
     }
   }, [lastValuesQry.data]);
 
@@ -139,7 +139,9 @@ export default function RequestTransactionPage() {
                   id="rib"
                   className="form-control"
                   required
-                  onBlur={() => setNRIB(formatCurrency(parseInt(removeComma(nRib))))}
+                  onBlur={() =>
+                    setNRIB(formatCurrency(parseInt(removeComma(nRib))))
+                  }
                   value={nRib}
                   onChange={(e) => setNRIB(validateNumberInput(e.target.value))}
                 />
@@ -158,7 +160,9 @@ export default function RequestTransactionPage() {
                   id="rmb"
                   className="form-control"
                   required
-                  onBlur={() => setNRMB(formatCurrency(parseInt(removeComma(nRmb))))}
+                  onBlur={() =>
+                    setNRMB(formatCurrency(parseInt(removeComma(nRmb))))
+                  }
                   value={nRmb}
                   onChange={(e) => setNRMB(validateNumberInput(e.target.value))}
                 />
@@ -180,7 +184,9 @@ export default function RequestTransactionPage() {
                   id="cib"
                   className="form-control"
                   required
-                  onBlur={() => setNCIB(formatCurrency(parseInt(removeComma(nCib))))}
+                  onBlur={() =>
+                    setNCIB(formatCurrency(parseInt(removeComma(nCib))))
+                  }
                   value={nCib}
                   onChange={(e) => setNCIB(validateNumberInput(e.target.value))}
                 />
@@ -200,7 +206,9 @@ export default function RequestTransactionPage() {
                   datatype="currency"
                   className="form-control"
                   required
-                  onBlur={() => setNCMB(formatCurrency(parseInt(removeComma(nCmb))))}
+                  onBlur={() =>
+                    setNCMB(formatCurrency(parseInt(removeComma(nCmb))))
+                  }
                   value={nCmb}
                   onChange={(e) => setNCMB(validateNumberInput(e.target.value))}
                 />

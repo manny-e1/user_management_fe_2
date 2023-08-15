@@ -59,13 +59,6 @@ export default function ChangePasswordPortalPage() {
 
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
-    let pwdReg =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    if (!pwdReg.test(newPwd)) {
-      return;
-    }
-
     if (newPwd !== confirmNewPwd) {
       setErr("the passwords don't match");
       return;
