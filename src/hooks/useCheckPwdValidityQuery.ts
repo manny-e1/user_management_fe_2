@@ -10,7 +10,10 @@ export function usePwdValidityQuery(id?: string) {
     queryKey: ['passwordValidity'],
     queryFn: async () => checkPasswordValidity(id!),
     enabled: id !== undefined,
-    staleTime: 60 * 1000,
+    cacheTime: 0,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
   useEffect(() => {
     if (

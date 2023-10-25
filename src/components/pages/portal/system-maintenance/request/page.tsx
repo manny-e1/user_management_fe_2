@@ -1,12 +1,13 @@
 'use client';
 import BreadCrumbs from '@/components/BreadCrumbs';
 import Section from '@/components/Section';
+import { usePwdValidityQuery } from '@/hooks/useCheckPwdValidityQuery';
 import { usePermission } from '@/hooks/usePermission';
 import { SysMntInput, createMntLog } from '@/service/system-maintenance';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { FiPlus } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 
@@ -15,6 +16,9 @@ export default function RequestMaintenancePage() {
   const router = useRouter();
   const [rows, setRows] = useState<SysMntInput[]>([]);
   const queryClient = useQueryClient();
+
+  usePwdValidityQuery(user?.id);
+
   const requestMntMut = useMutation({
     mutationFn: createMntLog,
     onSuccess: (data) => {
@@ -59,6 +63,8 @@ export default function RequestMaintenancePage() {
       },
     ]);
   };
+
+  console.log({ rows });
 
   const deleteRows = (index: number) => {
     const tmpRows = rows.slice();
@@ -204,107 +210,112 @@ export default function RequestMaintenancePage() {
                 <td className="text-left font-bold px-2"></td>
               </tr>
               {rows.map((item: SysMntInput, index: number) => (
-                <tr>
-                  <td className="pe-2">
-                    <input
-                      type="date"
-                      value={item.fromDate}
-                      onChange={(e) =>
-                        handleFromDateChange(e.target.value, index)
-                      }
-                      className="form-control datetime-picker-size"
-                      required
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="time"
-                      value={item.fromTime}
-                      onChange={(e) =>
-                        handleFromTimeChange(e.target.value, index)
-                      }
-                      className="form-control datetime-picker-size"
-                      required
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="date"
-                      id={`endDate${index}`}
-                      value={item.toDate}
-                      onChange={(e) =>
-                        handleToDateChange(e.target.value, index)
-                      }
-                      className="form-control datetime-picker-size"
-                      min={item.minDate}
-                      required
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="time"
-                      id={`endTime${index}`}
-                      value={item.toTime}
-                      className="form-control datetime-picker-size"
-                      onChange={(e) =>
-                        handleToTimeChange(e.target.value, index)
-                      }
-                      min={item.minTime}
-                      required
-                    />
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="checkbox"
-                      id={`checkbox1-${index}`}
-                      checked={item.iRakyat}
-                      onChange={(e) =>
-                        handleIRakyatChange(e.target.checked, index)
-                      }
-                      className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
-                    />
-                    <label
-                      htmlFor={`checkbox1-${index}`}
-                      className="form-label ms-1 select-none cursor-pointer"
-                    >
-                      iRakyat
-                    </label>
-                  </td>
-                  <td className="p-2">
-                    <input
-                      type="checkbox"
-                      id={`checkbox2-${index}`}
-                      checked={item.iBizRakyat}
-                      onChange={(e) =>
-                        handleIBizRakyatChange(e.target.checked, index)
-                      }
-                      className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
-                    />
-                    <label
-                      htmlFor={`checkbox2-${index}`}
-                      className="form-label ms-1 select-none cursor-pointer"
-                    >
-                      i-BizRakyat
-                    </label>
-                  </td>
-                  <td className="ps-2">
-                    <button
-                      type="button"
-                      className={`bg-[#dc3545] active:bg-[#de4060] text-white px-3 py-1 rounded-[4px] flex ${
-                        index ? '' : 'hidden'
-                      }`}
-                      onClick={() => deleteRows(index)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+                <Fragment key={index}>
+                  <tr>
+                    <td className="pe-2">
+                      <input
+                        type="date"
+                        value={item.fromDate}
+                        onChange={(e) =>
+                          handleFromDateChange(e.target.value, index)
+                        }
+                        className="form-control datetime-picker-size"
+                        required
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="time"
+                        value={item.fromTime}
+                        onChange={(e) =>
+                          handleFromTimeChange(e.target.value, index)
+                        }
+                        className="form-control datetime-picker-size"
+                        required
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="date"
+                        id={`endDate${index}`}
+                        value={item.toDate}
+                        onChange={(e) =>
+                          handleToDateChange(e.target.value, index)
+                        }
+                        className="form-control datetime-picker-size"
+                        min={item.minDate}
+                        required
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="time"
+                        id={`endTime${index}`}
+                        value={item.toTime}
+                        className="form-control datetime-picker-size"
+                        onChange={(e) =>
+                          handleToTimeChange(e.target.value, index)
+                        }
+                        min={item.minTime}
+                        required
+                      />
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="checkbox"
+                        id={`checkbox1-${index}`}
+                        checked={item.iRakyat}
+                        onChange={(e) =>
+                          handleIRakyatChange(e.target.checked, index)
+                        }
+                        className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
+                      />
+                      <label
+                        htmlFor={`checkbox1-${index}`}
+                        className="form-label ms-1 select-none cursor-pointer"
+                      >
+                        iRakyat
+                      </label>
+                    </td>
+                    <td className="p-2">
+                      <input
+                        type="checkbox"
+                        id={`checkbox2-${index}`}
+                        checked={item.iBizRakyat}
+                        onChange={(e) =>
+                          handleIBizRakyatChange(e.target.checked, index)
+                        }
+                        className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
+                      />
+                      <label
+                        htmlFor={`checkbox2-${index}`}
+                        className="form-label ms-1 select-none cursor-pointer"
+                      >
+                        i-BizRakyat
+                      </label>
+                    </td>
+                    <td className="ps-2">
+                      <button
+                        type="button"
+                        className={`bg-[#dc3545] active:bg-[#de4060] text-white px-3 py-1 rounded-[4px] flex ${
+                          index ? '' : 'hidden'
+                        }`}
+                        onClick={() => deleteRows(index)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                </Fragment>
               ))}
             </tbody>
           </table>
 
           <div className="flex justify-end gap-2 me-2">
-            <Link href={'/portal/system-maintenance'}>
+            <Link
+              href={'/portal/system-maintenance'}
+              aria-disabled={requestMntMut.isLoading}
+            >
               <button
                 type="button"
                 className={`bg-[#6c757d] hover:bg-[#5c636a] active:bg-[#565e64] text-white px-3 py-1 rounded-[4px] flex`}
@@ -313,6 +324,7 @@ export default function RequestMaintenancePage() {
               </button>
             </Link>
             <button
+              disabled={requestMntMut.isLoading}
               type="submit"
               className={`bg-[#3b7ddd] hover:bg-[#326abc] active:bg-[#2f64b1] text-white px-3 py-1 rounded-[4px] flex`}
               onClick={handleSaveClicked}

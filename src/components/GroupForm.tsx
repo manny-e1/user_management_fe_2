@@ -29,13 +29,6 @@ export default function GroupForm({
   const router = useRouter();
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
-  const [error, setError] = useState<{
-    error: string | null;
-    showModal: boolean;
-  }>({
-    error: null,
-    showModal: false,
-  });
 
   const queryClient = useQueryClient();
 
@@ -177,25 +170,6 @@ export default function GroupForm({
           </button>
         </div>
       </div>
-      {error.showModal && (
-        <Modal
-          error={!!error}
-          message={
-            !!error.error
-              ? error.error
-              : edit
-              ? 'You have successfully updated the user group'
-              : 'You have successfully created a user group'
-          }
-          onClick={() => {
-            setError({ error: null, showModal: false });
-            if (error.error) {
-              return;
-            }
-            back();
-          }}
-        />
-      )}
     </form>
   );
 }

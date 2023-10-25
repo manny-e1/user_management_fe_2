@@ -415,13 +415,15 @@ export default function ViewTransactionPage() {
           <div className="w-full flex justify-end gap-2">
             <Link
               href="/portal/transaction-limit"
-              className=" text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
+              className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
+              aria-disabled={approve.isLoading || reject.isLoading}
             >
               Back
             </Link>
             {user?.role === 'manager 1' && status == 0 ? (
               <>
                 <button
+                  disabled={approve.isLoading || reject.isLoading}
                   type="submit"
                   id="btnApproved"
                   className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
@@ -430,6 +432,7 @@ export default function ViewTransactionPage() {
                   Approve
                 </button>
                 <button
+                  disabled={approve.isLoading || reject.isLoading}
                   type="button"
                   id="btnRejected"
                   className="text-white bg-red-500 hover:bg-red-600 rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"

@@ -13,12 +13,16 @@ import {
   getMntLogs,
   rejectMntLogs,
 } from '@/service/system-maintenance';
+import { usePwdValidityQuery } from '@/hooks/useCheckPwdValidityQuery';
 
 export default function SystemMaintenancePage() {
   const user = usePermission();
   const [xlData, setXlData] = useState<any[]>([]);
 
   const queryClient = useQueryClient();
+
+  usePwdValidityQuery(user?.id);
+
   const mntLogsQry = useQuery({
     queryKey: ['system-maintenance'],
     queryFn: getMntLogs,
@@ -167,7 +171,6 @@ export default function SystemMaintenancePage() {
   // Maintence Data which is showing to table
   const mntLogs = mntLogsQry.data?.mntLogs ?? [];
   const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'System Maintenance' }];
-  console.log(mntLogsQry.data);
 
   return (
     <div className="p-4 text-[#495057] no-scrollbar">

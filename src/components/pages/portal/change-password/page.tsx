@@ -132,7 +132,7 @@ export default function ChangePasswordPortalPage() {
           <div className="w-full mt-7 text-end">
             <div className="min-[576px]:w-[58.333333%] px-[calc(var(--bs-gutter-x)*.5)] mt-4">
               <input
-                disabled={checkPwdMut.isLoading}
+                disabled={checkPwdMut.isLoading || chgPwdMut.isLoading}
                 type="submit"
                 value="Submit"
                 id="btnSaveNewPassword"

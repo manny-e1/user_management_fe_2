@@ -1,28 +1,29 @@
 import Table from '@/components/tanstack-table/Table';
 import { rejectionListingColumns } from '@/lib/rejection-listing-columns';
 import { getRejectLogs } from '@/service/rejection-logs';
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react';
 import { useQuery } from '@tanstack/react-query';
-import { Fragment, useState } from 'react'
+import { Fragment, useState } from 'react';
 
 export default function RejectionModal({
-	id,
-	visible,
-	setVisible
-} : {
-	id: string,
-	visible: boolean,
-	setVisible: (vis: boolean) => void
+  id,
+  visible,
+  setVisible,
+}: {
+  id: string;
+  visible: boolean;
+  setVisible: (vis: boolean) => void;
 }) {
-	const closeModal = () => setVisible(false);
-	
-	const getRejectLogQry = useQuery({
-		queryKey: ['rejection-log'],
-		queryFn: () => getRejectLogs(id),
-		refetchOnWindowFocus: false
-	});
+  const closeModal = () => setVisible(false);
 
-  	return (
+  const getRejectLogQry = useQuery({
+    queryKey: ['rejection-log'],
+    queryFn: () => getRejectLogs(id),
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+  });
+
+  return (
     <>
       <Transition appear show={visible} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -56,17 +57,20 @@ export default function RejectionModal({
                   >
                     Rejection Log
                   </Dialog.Title>
-                  
-				  <Table
-				  	route=''
-					data={
-						getRejectLogQry.isFetched ? (
-							getRejectLogQry.data && 'error' in getRejectLogQry.data ? [] : getRejectLogQry.data?.rjtLogs ?? []
-						) : []
-					}
-					hideUtility={true}
-					columns={rejectionListingColumns()}
-				  />
+
+                  <Table
+                    route=""
+                    data={
+                      getRejectLogQry.isFetched
+                        ? getRejectLogQry.data &&
+                          'error' in getRejectLogQry.data
+                          ? []
+                          : getRejectLogQry.data?.rjtLogs ?? []
+                        : []
+                    }
+                    hideUtility={true}
+                    columns={rejectionListingColumns()}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -74,5 +78,5 @@ export default function RejectionModal({
         </Dialog>
       </Transition>
     </>
-  	)
+  );
 }

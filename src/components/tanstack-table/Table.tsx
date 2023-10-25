@@ -173,7 +173,6 @@ export default function Table<T extends { id: string }>({
                 })
               }
               onToChange={(value) => {
-                console.log(value);
                 setMntFilter({
                   ...mntFilter,
                   toDate: value,
