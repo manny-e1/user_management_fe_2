@@ -1,5 +1,6 @@
 import { API_URL } from '@/lib/config';
 import { Role } from './role';
+import { getHeader } from '@/helper';
 
 export type User = {
   idx: number;
@@ -16,13 +17,15 @@ export type MessageResponse = { message: string } | { error: string };
 export type Status = 'active' | 'locked';
 
 export async function getUsers() {
-  const res = await fetch(`${API_URL}/users`, { cache: 'no-cache' });
+  const headers = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/users`, headers);
   const data: { users: User[] } | { error: string } = await res.json();
   return data;
 }
 
 export async function getUserById(id: string) {
-  const res = await fetch(`${API_URL}/users/${id}`);
+  const headers = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/users/${id}`, headers);
   const data: { user: User } | { error: string } = await res.json();
   return data;
 }
@@ -36,15 +39,14 @@ export async function editUser({
   name: string;
   userGroup: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/users/${id}`, {
     method: 'PUT',
     body: JSON.stringify({
       name,
       userGroup,
     }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;
@@ -57,15 +59,14 @@ export async function login({
   email: string;
   password: string;
 }) {
+  const normalHeader = getHeader('NORMALPOST');
   const res = await fetch(`${API_URL}/users/login`, {
     method: 'POST',
     body: JSON.stringify({
       email,
       password,
     }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: normalHeader.headers,
   });
   const data:
     | { user: User & { token: string; role: Role } }
@@ -82,6 +83,7 @@ export async function resetPassword({
   password: string;
   src?: 'activate';
 }) {
+  const normalHeader = getHeader('NORMALPOST');
   const res = await fetch(`${API_URL}/users/reset-password`, {
     method: 'POST',
     body: JSON.stringify({
@@ -89,9 +91,7 @@ export async function resetPassword({
       password,
       src,
     }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: normalHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;
@@ -103,12 +103,11 @@ export async function createUser(body: {
   userGroup: string;
   staffId: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/users`, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;
@@ -121,12 +120,11 @@ export async function changeUserStatus({
   email: string;
   status: Status;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/users/change-status`, {
     method: 'PATCH',
     body: JSON.stringify({ status, email }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;
@@ -156,12 +154,11 @@ export async function activateUser(token: string) {
 }
 
 export async function forgotPassword(email: string) {
+  const normalHeader = getHeader('NORMALPOST');
   const res = await fetch(`${API_URL}/users/forgot-password`, {
     method: 'POST',
     body: JSON.stringify({ email }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: normalHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;
@@ -177,11 +174,20 @@ export async function checkResetPasswordToken(token: string, src?: 'activate') {
 }
 
 export async function deleteUser(id: string) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/users/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
+  });
+  const data: MessageResponse = await res.json();
+  return data;
+}
+
+export async function logoutUser(id: string) {
+  const authHeader = getHeader('AUTHPOST');
+  const res = await fetch(`${API_URL}/users/${id}`, {
+    method: 'PATCH',
+    headers: authHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;
@@ -191,12 +197,11 @@ export async function checkCurrentPassword(body: {
   id: string;
   password: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/users/check-current-password`, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;

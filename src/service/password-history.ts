@@ -1,7 +1,12 @@
+import { getHeader } from '@/helper';
 import { API_URL } from '@/lib/config';
 
 export async function checkPasswordValidity(userId: string) {
-  const res = await fetch(`${API_URL}/password-histories/${userId}`);
+  const authHeader = getHeader('AUTHGET');
+  const res = await fetch(
+    `${API_URL}/password-histories/${userId}`,
+    authHeader
+  );
   if (res.status === 204) {
     const data = { error: undefined };
     return data;

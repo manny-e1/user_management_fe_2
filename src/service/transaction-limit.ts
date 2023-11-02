@@ -1,5 +1,6 @@
 import { API_URL } from '@/lib/config';
 import { MessageResponse } from './user';
+import { getHeader } from '@/helper';
 
 export type TxnLimit = {
   id: string;
@@ -21,19 +22,22 @@ export type TxnLimit = {
 };
 
 export async function getTxnLogs() {
-  const res = await fetch(`${API_URL}/transactions`, { cache: 'no-cache' });
+  const authHeader = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/transactions`, authHeader);
   const data: { txnLogs: TxnLimit[] } | { error: string } = await res.json();
   return data;
 }
 
 export async function getTxnById(id: string) {
-  const res = await fetch(`${API_URL}/transactions/${id}`);
+  const authHeader = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/transactions/${id}`, authHeader);
   const data: { txnLog: TxnLimit } | { error: string } = await res.json();
   return data;
 }
 
 export async function getLastUpdatedValue() {
-  const res = await fetch(`${API_URL}/transactions/last-updated`);
+  const authHeader = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/transactions/last-updated`, authHeader);
   const data: { txnLog: TxnLimit } | { error: string } = await res.json();
   return data;
 }
@@ -44,13 +48,12 @@ export async function changeTxnStatus(body: {
   msg?: string;
   checker: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const { id, ...rest } = body;
   const res = await fetch(`${API_URL}/transactions/${id}`, {
     method: 'PUT',
     body: JSON.stringify(rest),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
   });
   const data: { updatedTxnLog: TxnLimit } | { error: string } =
     await res.json();
@@ -68,12 +71,11 @@ export async function createTxnLog(body: {
   nRMB: number;
   marker: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/transactions`, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;

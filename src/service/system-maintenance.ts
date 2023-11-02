@@ -1,6 +1,6 @@
 import { API_URL } from '@/lib/config';
 import { MessageResponse } from './user';
-
+import { getHeader } from '@/helper';
 export type SysMaintenance = {
   id: string;
   mid: number;
@@ -32,14 +32,16 @@ export type SysMntInput = {
 };
 
 export async function getMntLogs() {
-  const res = await fetch(`${API_URL}/maintenance`);
+  const headers = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/maintenance`, headers);
   const data: { mntLogs: SysMaintenance[] } | { error: string } =
     await res.json();
   return data;
 }
 
 export async function getMntLog(id: string) {
-  const res = await fetch(`${API_URL}/maintenance/${id}`);
+  const headers = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/maintenance/${id}`, headers);
   const data: { mntLog: SysMaintenance } | { error: string } = await res.json();
   return data;
 }
@@ -53,11 +55,10 @@ export async function createMntLog(
     submittedBy: string;
   }[]
 ) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/maintenance`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
     body: JSON.stringify(body),
   });
 
@@ -74,6 +75,7 @@ export async function updateMntLog({
   email: string;
   mntInput: SysMntInput;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const data: {
     startDate: string;
     endDate: string;
@@ -92,9 +94,7 @@ export async function updateMntLog({
 
   const res = await fetch(`${API_URL}/maintenance/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
     body: JSON.stringify(data),
   });
 
@@ -109,11 +109,10 @@ export async function approveMntLogs({
   ids: string[];
   email: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/maintenance/approve`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
     body: JSON.stringify({ ids: ids, email: email }),
   });
 
@@ -130,11 +129,10 @@ export async function rejectMntLogs({
   email: string;
   msg: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/maintenance/reject`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
     body: JSON.stringify({ ids: ids, email: email, msg: msg }),
   });
 
@@ -149,11 +147,10 @@ export async function completeMntLogs({
   id: string;
   channel: string;
 }) {
+  const authHeader = getHeader('AUTHPOST');
   const res = await fetch(`${API_URL}/maintenance/complete`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: authHeader.headers,
     body: JSON.stringify({ id: id, channel: channel }),
   });
 

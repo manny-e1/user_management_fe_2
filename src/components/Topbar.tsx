@@ -10,6 +10,9 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { useGetUserFromCookie } from '@/hooks/useGetUseFromCookie';
 import { use, useLayoutEffect, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { logoutUser } from '@/service/user';
+import { data } from 'autoprefixer';
 
 function DropDownEmail({ email }: { email?: string }) {
   const [isSizeGreater, setIsSizeGreater] = useState(true);
@@ -38,6 +41,17 @@ export default function Topbar() {
   const handleCollpase = () => {
     setSidebarCollapsed((prev) => !prev);
   };
+  const logoutMut = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: (data) => {
+      if ('message' in data && data.message === 'success') {
+        Cookies.remove('user');
+        sessionStorage.clear();
+        Cookies.remove('rememberMe');
+        router.push('/login');
+      }
+    },
+  });
   return (
     <div className="flex flex-nowrap text-sm items-center justify-between px-4 py-3.5 bg-white shadow-[0_0_2rem_0_rgba(33,37,41,.1)]">
       <HiOutlineMenuAlt2
@@ -80,11 +94,9 @@ export default function Topbar() {
         </Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item
+          disabled={logoutMut.isLoading}
           onClick={() => {
-            Cookies.remove('user');
-            sessionStorage.clear();
-            Cookies.remove('rememberMe');
-            router.push('/login');
+            logoutMut.mutate(user?.id ?? '');
           }}
         >
           Log out

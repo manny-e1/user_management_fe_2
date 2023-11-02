@@ -12,6 +12,7 @@ import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
 import PasswordInput from '../PasswordInput';
 import EmailInput from '../EmailInput';
+import secureLocalStorage from 'react-secure-storage';
 
 export default function SigninPage() {
   usePermission();
@@ -41,7 +42,7 @@ export default function SigninPage() {
         });
         return;
       } else {
-        const user = data.user;
+        const { token, ...user } = data.user;
         if (rememberMe) {
           Cookies.set('user', JSON.stringify(user));
           Cookies.set('rememberMe', 'yes');
@@ -53,6 +54,7 @@ export default function SigninPage() {
             Date.now().toString()
           );
         }
+        secureLocalStorage.setItem('token', token);
         router.push('/');
       }
     },

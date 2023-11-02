@@ -1,3 +1,4 @@
+import { getHeader } from '@/helper';
 import { API_URL } from '@/lib/config';
 
 export type Role =
@@ -14,9 +15,8 @@ export type GetRole = {
 };
 
 export async function getRoles() {
-  const res = await fetch(`${API_URL}/roles`, {
-    next: { revalidate: 60 * 60 },
-  });
+  const authHeader = getHeader('AUTHGET');
+  const res = await fetch(`${API_URL}/roles`, authHeader);
   const data: { roles: GetRole[] } | { error: string } = await res.json();
   return data;
 }
