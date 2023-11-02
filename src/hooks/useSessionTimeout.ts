@@ -1,10 +1,12 @@
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useLogout } from './useLogout';
+import { User } from '@/service/user';
 
 export function useSessionTimeout() {
   const router = useRouter();
-
+  const logoutMut = useLogout(router);
   useEffect(() => {
     const rememberMe = Cookies.get('rememberMe');
     if (!rememberMe || rememberMe === 'yes') {
@@ -18,9 +20,11 @@ export function useSessionTimeout() {
     };
 
     const logout = () => {
-      sessionStorage.clear();
-      Cookies.remove('rememberMe');
-      router.push('/login');
+      const user = sessionStorage.getItem('user');
+      if (user) {
+        const parsedUser: User = JSON.parse(user);
+        logoutMut.mutate(parsedUser.id);
+      }
     };
 
     const handleActivity = () => {

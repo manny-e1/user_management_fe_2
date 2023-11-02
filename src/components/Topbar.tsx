@@ -13,6 +13,7 @@ import { use, useLayoutEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { logoutUser } from '@/service/user';
 import { data } from 'autoprefixer';
+import { useLogout } from '@/hooks/useLogout';
 
 function DropDownEmail({ email }: { email?: string }) {
   const [isSizeGreater, setIsSizeGreater] = useState(true);
@@ -41,17 +42,7 @@ export default function Topbar() {
   const handleCollpase = () => {
     setSidebarCollapsed((prev) => !prev);
   };
-  const logoutMut = useMutation({
-    mutationFn: logoutUser,
-    onSuccess: (data) => {
-      if ('message' in data && data.message === 'success') {
-        Cookies.remove('user');
-        sessionStorage.clear();
-        Cookies.remove('rememberMe');
-        router.push('/login');
-      }
-    },
-  });
+  const logoutMut = useLogout(router);
   return (
     <div className="flex flex-nowrap text-sm items-center justify-between px-4 py-3.5 bg-white shadow-[0_0_2rem_0_rgba(33,37,41,.1)]">
       <HiOutlineMenuAlt2
