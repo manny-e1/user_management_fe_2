@@ -120,70 +120,74 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
       >
         View
       </Link>
-      {user?.role == 'normal user 2' &&
-        (channelStatus.indexOf('C') == -1 ||
-          (channelStatus.indexOf('C') != -1 &&
-            mnt.approvalStatus === 'Pending')) && (
-          <>
-            <Link
-              href={`/portal/system-maintenance/edit/${id}`}
-              className="text-blue-500"
-            >
-              Edit
-            </Link>
-            <span
-              onClick={handleDeleteClick}
-              className="text-blue-500 cursor-pointer"
-            >
-              Delete
-            </span>
-          </>
-        )}
-      {user?.role === 'normal user 2' && (
-        <div className="flex flex-col gap-1">
-          {mnt.iRakyatYN &&
-            mnt.iRakyatStatus == 'A' &&
-            (mnt.approvalStatus == 'Approved' ||
-              (mnt.approvalStatus == 'Pending' &&
-                mnt.submissionStatus == 'Marked')) && (
-              <div
-                className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer"
-                onClick={handleCompleteRakyat}
-              >
-                <FiCheckCircle className="inline-block me-1" />
-                i-Rakyat
-              </div>
+      {mnt.submissionStatus !== 'Delete' && (
+        <>
+          {user?.role == 'normal user 2' &&
+            (channelStatus.indexOf('C') == -1 ||
+              (channelStatus.indexOf('C') != -1 &&
+                mnt.approvalStatus === 'Pending')) && (
+              <>
+                <Link
+                  href={`/portal/system-maintenance/edit/${id}`}
+                  className="text-blue-500"
+                >
+                  Edit
+                </Link>
+                <span
+                  onClick={handleDeleteClick}
+                  className="text-blue-500 cursor-pointer"
+                >
+                  Delete
+                </span>
+              </>
             )}
-          {mnt.iRakyatYN &&
-            mnt.iRakyatStatus == 'C' &&
-            mnt.approvalStatus == 'Pending' && (
-              <div className="flex items-center select-none text-[#1cbb8c]">
-                <FiCheckCircle className="inline-block me-1" />
-                i-Rakyat
-              </div>
-            )}
-          {mnt.iBizRakyatYN &&
-            mnt.iBizRakyatStatus == 'A' &&
-            (mnt.approvalStatus == 'Approved' ||
-              (mnt.approvalStatus == 'Pending' &&
-                mnt.submissionStatus == 'Marked')) && (
-              <div
-                className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer"
-                onClick={handleCompleteBizRakyat}
-              >
-                <FiCheckCircle className="inline-block me-1" />
-                i-BizRakyat
-              </div>
-            )}
-          {mnt.iBizRakyatYN &&
-            mnt.iBizRakyatStatus == 'C' &&
-            mnt.approvalStatus == 'Pending' && (
-              <div className="flex items-center select-none text-[#1cbb8c]">
-                <FiCheckCircle className="inline-block me-1" />
-                i-BizRakyat
-              </div>
-            )}
-        </div>
+          {user?.role === 'normal user 2' && (
+            <div className="flex flex-col gap-1">
+              {mnt.iRakyatYN &&
+                mnt.iRakyatStatus == 'A' &&
+                (mnt.approvalStatus == 'Approved' ||
+                  (mnt.approvalStatus == 'Pending' &&
+                    mnt.submissionStatus == 'Marked')) && (
+                  <div
+                    className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer"
+                    onClick={handleCompleteRakyat}
+                  >
+                    <FiCheckCircle className="inline-block me-1" />
+                    i-Rakyat
+                  </div>
+                )}
+              {mnt.iRakyatYN &&
+                mnt.iRakyatStatus == 'C' &&
+                mnt.approvalStatus == 'Pending' && (
+                  <div className="flex items-center select-none text-[#1cbb8c]">
+                    <FiCheckCircle className="inline-block me-1" />
+                    i-Rakyat
+                  </div>
+                )}
+              {mnt.iBizRakyatYN &&
+                mnt.iBizRakyatStatus == 'A' &&
+                (mnt.approvalStatus == 'Approved' ||
+                  (mnt.approvalStatus == 'Pending' &&
+                    mnt.submissionStatus == 'Marked')) && (
+                  <div
+                    className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer"
+                    onClick={handleCompleteBizRakyat}
+                  >
+                    <FiCheckCircle className="inline-block me-1" />
+                    i-BizRakyat
+                  </div>
+                )}
+              {mnt.iBizRakyatYN &&
+                mnt.iBizRakyatStatus == 'C' &&
+                mnt.approvalStatus == 'Pending' && (
+                  <div className="flex items-center select-none text-[#1cbb8c]">
+                    <FiCheckCircle className="inline-block me-1" />
+                    i-BizRakyat
+                  </div>
+                )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -215,7 +219,6 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
             i-Rakyat
           </span>
           {((mnt.iRakyatStatus != '' &&
-            mnt.approvalStatus != 'Pending' &&
             mnt.approvalStatus != 'Rejected' &&
             mnt.submissionStatus !== 'Delete') ||
             (mnt.submissionStatus == 'Marked' &&
@@ -241,7 +244,6 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
             i-BizRakyat
           </span>
           {((mnt.iBizRakyatStatus != '' &&
-            mnt.approvalStatus != 'Pending' &&
             mnt.approvalStatus != 'Rejected' &&
             mnt.submissionStatus !== 'Delete') ||
             mnt.submissionStatus == 'Marked') && (
