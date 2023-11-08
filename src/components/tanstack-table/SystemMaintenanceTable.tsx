@@ -230,7 +230,11 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
                   : 'bg-red-100 text-red-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-red-400 border border-red-400'
               }`}
             >
-              {mnt.iRakyatStatus == 'A' ? <>Active</> : <>Complete</>}
+              {mnt.iRakyatStatus == 'A' || mnt.iRakyatStatus === 'CC' ? (
+                <>Active</>
+              ) : (
+                <>Complete</>
+              )}
             </span>
           )}
         </div>
@@ -254,7 +258,11 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
                   : 'bg-red-100 text-red-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-red-400 border border-red-400'
               }`}
             >
-              {mnt.iBizRakyatStatus == 'A' ? <>Active</> : <>Complete</>}
+              {mnt.iBizRakyatStatus == 'A' || mnt.iBizRakyatStatus === 'CC' ? (
+                <>Active</>
+              ) : (
+                <>Complete</>
+              )}
             </span>
           )}
         </div>
