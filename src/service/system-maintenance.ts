@@ -139,6 +139,15 @@ export async function rejectMntLogs({
   const resData: MessageResponse = await res.json();
   return resData;
 }
+export async function deleteMntLog({ id }: { id: string }) {
+  const authHeader = getHeader('AUTHGET');
+  const resp = await fetch(`${API_URL}/maintenance/${id}`, {
+    method: 'DELETE',
+    headers: authHeader.headers,
+  });
+  const resData: MessageResponse = await resp.json();
+  return resData;
+}
 
 export async function completeMntLogs({
   id,

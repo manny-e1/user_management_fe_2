@@ -4,6 +4,7 @@ import Table from './Table';
 import {
   SysMaintenance,
   completeMntLogs,
+  deleteMntLog,
 } from '../../service/system-maintenance';
 import { maintenanceListingColumns } from '@/lib/maintenance-listing-columns';
 import { FiCheckCircle, FiCircle } from 'react-icons/fi';
@@ -40,6 +41,21 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
     },
   });
 
+  const deleteMut = useMutation({
+    mutationFn: deleteMntLog,
+    onSuccess: async (data) => {
+      if ('error' in data) {
+        await Swal.fire({
+          title: 'Error!',
+          text: data.error,
+          icon: 'error',
+        });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ['system-maintenance'] });
+    },
+  });
+
   const handleDeleteClick = async () => {
     await Swal.fire({
       title: 'Confirmation',
@@ -51,15 +67,7 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
       confirmButtonText: 'Yes, delete it!',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const resp = await fetch(`${API_URL}/maintenance/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: id }),
-        });
-
-        queryClient.invalidateQueries({ queryKey: ['system-maintenance'] });
+        deleteMut.mutate({ id });
       }
     });
   };
