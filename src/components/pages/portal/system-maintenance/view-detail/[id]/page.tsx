@@ -295,7 +295,9 @@ export default function ViewMaintenancePage() {
           </Link>
           {user?.role === 'manager 2' &&
             mntLog?.approvalStatus != 'Approved' &&
-            mntLog?.approvalStatus != 'Rejected' && (
+            mntLog?.approvalStatus != 'Rejected' &&
+            mntLog?.iBizRakyatStatus !== 'C' &&
+            mntLog?.iRakyatStatus !== 'C' && (
               <>
                 <button
                   disabled={approveMut.isLoading || rejectMut.isLoading}

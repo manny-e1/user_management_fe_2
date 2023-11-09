@@ -91,7 +91,7 @@ export default function SystemMaintenancePage() {
       queryClient.invalidateQueries({ queryKey: ['system-maintenance'] });
       await Swal.fire({
         title: 'Success!',
-        text: "You've successfully approved the system maintenance schedule.",
+        text: "You've successfully rejected the system maintenance schedule.",
         icon: 'success',
       });
     },
