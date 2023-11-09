@@ -135,12 +135,15 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
                   >
                     Edit
                   </Link>
-                  <span
-                    onClick={handleDeleteClick}
-                    className="text-blue-500 cursor-pointer"
-                  >
-                    Delete
-                  </span>
+                  {mnt.iBizRakyatStatus === 'A' ||
+                    (mnt.iRakyatStatus === 'A' && (
+                      <span
+                        onClick={handleDeleteClick}
+                        className="text-blue-500 cursor-pointer"
+                      >
+                        Delete
+                      </span>
+                    ))}
                 </>
               )}
             {user?.role === 'normal user 2' && (
@@ -200,14 +203,17 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
 const CheckBox = ({ mnt }: { mnt: SysMaintenance }) => {
   return (
     <div className="p-1">
-      {!(
-        mnt.approvalStatus == 'Rejected' || mnt.approvalStatus == 'Approved'
-      ) && (
-        <input
-          type="checkbox"
-          className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
-          id={mnt.id}
-        />
+      {mnt.iBizRakyatStatus !== 'C' && mnt.iRakyatStatus !== 'C' && (
+        <>
+          {mnt.approvalStatus !== 'Rejected' &&
+            mnt.approvalStatus !== 'Approved' && (
+              <input
+                type="checkbox"
+                className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
+                id={mnt.id}
+              />
+            )}
+        </>
       )}
     </div>
   );
