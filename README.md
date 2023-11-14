@@ -46,8 +46,6 @@ The application will again start on port 3001.
 
 For running the production build in a production environment(EC2 instance)
 
-For running in an EC2 instance.
-
 1. First get the **.pem** file and ip for the that instance:
 2. Navigate to the folder where you put the **.pem** file and give it permission using your terminal
 
