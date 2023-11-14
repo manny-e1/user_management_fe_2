@@ -44,7 +44,25 @@ npm start
 
 The application will again start on port 3001.
 
-For running the production build in a production environment, you can use **pm2**, a process manager for Node.js applications. First, install **pm2** globally using npm:
+For running the production build in a production environment(EC2 instance)
+
+For running in an EC2 instance.
+
+1. First get the **.pem** file and ip for the that instance:
+2. Navigate to the folder where you put the **.pem** file and give it permission using your terminal
+
+```bash
+chmod 400 name.pem
+```
+
+3. SSH into the server
+
+```bash
+ssh -i name.pem ubuntu@123.45.67.89
+```
+
+4. Clone the project from github and do the necessary steps to install the dependecies and build the project
+5. You can use **pm2**, a process manager for Node.js applications to run it
 
 ```bash
 npm install pm2 -g
