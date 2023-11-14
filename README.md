@@ -1,34 +1,76 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Admin Portal Frontend
 
-## Getting Started
+This README provides information about the Admin Portal, a frontend project. It covers how to run the project in development and production modes, details about the packages used, and some key functionalities of the application.
 
-First, run the development server:
+## Prerequisites
+
+To run this project, it's recommended to have these installed on your computer.
+
+- Node.js (v16.14.0 or higher)
+- npm (v8.0.0 or higher)
+
+## Running the Application
+
+First, you need to install all the dependencies that are listed in package.json file.
+
+```bash
+npm install
+```
+
+### Development Mode
+
+To run the application in development mode, use the following command:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This command will start the application on port 3001.
+Please note that when running the project locally, you must change the backend URL in the **_config.ts_** file located in the **_utils_** folder. This is because CORS is implemented on the backend, and the deployed backend will reject all requests coming from the local development server. Make sure you are also running the backend locally and use that URL.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Mode
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+To run the application in production mode, you first need to build the project:
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+After the build process is complete, you can start the application:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The application will again start on port 3001.
 
-## Deploy on Vercel
+For running the production build in a production environment, you can use **pm2**, a process manager for Node.js applications. First, install **pm2** globally using npm:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm install pm2 -g
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Then, you can start the application with **pm2**:
+
+```bash
+pm2 start npm --name "admin_portal" -- start
+```
+
+## Packages Used
+
+This project uses several packages. The following are some of the key packages and their roles:
+
+- @tanstack/react-query: Used for fetching, caching, synchronizing and updating server state in the application.
+- **@tanstack/react-table**: Used for handling table view in the application.
+- **next**: The core framework used for building the application.
+- **react**: A JavaScript library for building user interfaces.
+- **react-icons**: Used for including popular icons in the application.
+- **react-secure-storage**: Used for securely storing the token from the backend when a user logs in.
+- **js-cookie**: Used for handling cookies in the application.
+- **typescript**: Used for writing typed JavaScript at any scale.
+
+## Key Functionalities
+
+When an unauthenticated user accesses the application, they will be directed to the login page. On this page, there is a "Remember me" checkbox. If this checkbox is ticked, the application will use cookies to store user data, and the session will not expire until the user signs out. If the checkbox is not ticked, the application will store user data in session storage, and all user data will be removed when the tab is closed. Also, the user will be logged out and redirected to the sign-in page after 15 minutes of inactivity.
+The token received from the backend when a user logs in is stored in local storage using the **react-secure-storage** package. If a user signs in on another tab, the token stored in local storage will be overwritten, which may cause issues in the tab where the user signed in first.
+Before attempting to log in make sure to create a user account with admin role and reset the password using the api endpoints(more information on the backend documentation).
