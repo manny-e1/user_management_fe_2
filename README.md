@@ -7,6 +7,13 @@ This README provides information about the Admin Portal, a frontend project. It 
 To run this project, it's recommended to have these installed on your computer.
 
 - Node.js (v16.14.0 or higher)
+  To install Node.js 18.\*, use the following command:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
+```
+
 - npm (v8.0.0 or higher)
 
 ## Running the Application
