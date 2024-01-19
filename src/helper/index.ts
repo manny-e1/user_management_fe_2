@@ -1,3 +1,4 @@
+import cookies from 'js-cookie';
 import secureLocalStorage from 'react-secure-storage';
 import Swal from 'sweetalert2';
 
@@ -43,7 +44,7 @@ export function formatDate(date?: Date) {
 }
 
 export function getHeader(type: 'AUTHPOST' | 'AUTHGET' | 'NORMALPOST') {
-  const token = secureLocalStorage.getItem('token');
+  const token = sessionStorage.getItem('token') || cookies.get('token');
   const headers: { Authorization?: string; 'Content-Type'?: string } = {};
   if (type === 'AUTHPOST') {
     headers['Content-Type'] = 'application/json';

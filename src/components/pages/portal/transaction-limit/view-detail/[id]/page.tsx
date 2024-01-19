@@ -67,11 +67,7 @@ export default function ViewTransactionPage() {
     mutationFn: changeTxnStatus,
     onSuccess: (data) => {
       if ('error' in data) {
-        Swal.fire(
-          'Error',
-          'You’ve successfully approved the transaction limit request.',
-          'error'
-        );
+        Swal.fire('Error', data.error, 'error');
         return;
       }
       queryClient.invalidateQueries(['transaction-limit']);
@@ -88,11 +84,7 @@ export default function ViewTransactionPage() {
     mutationFn: changeTxnStatus,
     onSuccess: (data) => {
       if ('error' in data) {
-        Swal.fire(
-          'Error',
-          'You’ve successfully approved the transaction limit request.',
-          'error'
-        );
+        Swal.fire('Error', data.error, 'error');
         return;
       }
       queryClient.invalidateQueries(['transaction-limit']);

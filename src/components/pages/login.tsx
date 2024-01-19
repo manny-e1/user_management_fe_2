@@ -46,6 +46,7 @@ export default function SigninPage() {
         if (rememberMe) {
           Cookies.set('user', JSON.stringify(user));
           Cookies.set('rememberMe', 'yes');
+          Cookies.set('token', token);
         } else {
           Cookies.set('rememberMe', 'no');
           sessionStorage.setItem('user', JSON.stringify(user));
@@ -53,8 +54,9 @@ export default function SigninPage() {
             'lastActivityTimestamp',
             Date.now().toString()
           );
+          sessionStorage.setItem('token', token);
         }
-        secureLocalStorage.setItem('token', token);
+        // secureLocalStorage.setItem('token', token);
         router.push('/');
       }
     },
