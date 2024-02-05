@@ -1,15 +1,20 @@
-'use client';
-import BreadCrumbs from '@/components/BreadCrumbs';
-import Section from '@/components/Section';
-import { usePwdValidityQuery } from '@/hooks/useCheckPwdValidityQuery';
-import { usePermission } from '@/hooks/usePermission';
-import { SysMntInput, createMntLog } from '@/service/system-maintenance';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Fragment, useEffect, useState } from 'react';
-import { FiPlus } from 'react-icons/fi';
-import Swal from 'sweetalert2';
+"use client";
+import BreadCrumbs from "@/components/BreadCrumbs";
+import Section from "@/components/Section";
+import { usePwdValidityQuery } from "@/hooks/useCheckPwdValidityQuery";
+import { usePermission } from "@/hooks/usePermission";
+import {
+  SysMaintenance,
+  SysMntInput,
+  createMntLog,
+  getMntLogs,
+} from "@/service/system-maintenance";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Fragment, useEffect, useState } from "react";
+import { FiPlus } from "react-icons/fi";
+import Swal from "sweetalert2";
 
 export default function RequestMaintenancePage() {
   const user = usePermission();
@@ -19,24 +24,30 @@ export default function RequestMaintenancePage() {
 
   usePwdValidityQuery(user?.id);
 
+  const mntLogsQry = useQuery({
+    queryKey: ["system-maintenance"],
+    queryFn: getMntLogs,
+    refetchOnWindowFocus: false,
+  });
+
   const requestMntMut = useMutation({
     mutationFn: createMntLog,
     onSuccess: (data) => {
-      if ('error' in data) {
+      if ("error" in data) {
         Swal.fire({
-          title: 'Error!',
+          title: "Error!",
           text: data.error,
-          icon: 'error',
+          icon: "error",
         });
         return;
       }
-      queryClient.invalidateQueries(['system-maintenance']);
+      queryClient.invalidateQueries(["system-maintenance"]);
       Swal.fire({
-        title: 'Success!',
+        title: "Success!",
         text: "You've successfully sent the request for approval.",
-        icon: 'success',
+        icon: "success",
       }).then(() => {
-        router.push('/portal/system-maintenance');
+        router.push("/portal/system-maintenance");
       });
     },
   });
@@ -52,14 +63,14 @@ export default function RequestMaintenancePage() {
     setRows([
       ...rows,
       {
-        fromDate: '',
-        fromTime: '',
-        toDate: '',
-        toTime: '',
+        fromDate: "",
+        fromTime: "",
+        toDate: "",
+        toTime: "",
         iRakyat: false,
         iBizRakyat: false,
-        minDate: '',
-        minTime: '',
+        minDate: "",
+        minTime: "",
       },
     ]);
   };
@@ -131,23 +142,61 @@ export default function RequestMaintenancePage() {
       submittedBy: string;
     }[] = [];
 
+    let mntLogs: SysMaintenance[] = [];
+    if (mntLogsQry.data && "mntLogs" in mntLogsQry.data)
+      mntLogs = mntLogsQry.data?.mntLogs ?? [];
+
     for (let i = 0; i < rows.length; ++i) {
       const item = rows[i];
+      const startDate = new Date(item.fromDate + " " + item.fromTime).toISOString();
+      const endDate = new Date(item.toDate + " " + item.toTime).toISOString();
       data.push({
-        startDate: new Date(item.fromDate + ' ' + item.fromTime).toISOString(),
-        endDate: new Date(item.toDate + ' ' + item.toTime).toISOString(),
+        startDate: startDate,
+        endDate: endDate,
         iRakyatYN: item.iRakyat,
         iBizRakyatYN: item.iBizRakyat,
-        submittedBy: user?.email ?? '',
+        submittedBy: user?.email ?? "",
       });
 
       if (item.iRakyat === false && item.iBizRakyat === false) {
         await Swal.fire(
-          'Error',
-          'You must select at least one channel per maintenance.',
-          'error'
+          "Error",
+          "You must select at least one channel per maintenance.",
+          "error"
         );
         return;
+      }
+
+      for (let k = i + 1; k < rows.length; ++ k) {
+        const kStartDate = new Date(rows[k].fromDate + " " + rows[k].fromTime).toISOString();
+        const kEndDate = new Date(rows[k].toDate + " " + rows[k].toTime).toISOString();
+        if (
+          ((item.iRakyat && rows[k].iRakyat) || (item.iBizRakyat && rows[k].iBizRakyat)) &&
+          ((endDate > kStartDate && endDate < kEndDate) ||
+          (startDate > kStartDate && startDate < kEndDate))
+        ) {
+          await Swal.fire(
+            "Error",
+            "System maintenance schedule is overlapping.",
+            "error"
+          );
+          return;
+        }
+      }
+
+      for (let k = 0; k < mntLogs.length; ++k) {
+        if (
+          ((item.iRakyat && mntLogs[k].iRakyatYN) || (item.iBizRakyat && mntLogs[k].iBizRakyatYN)) &&
+          ((endDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
+          (startDate > mntLogs[k].startDate && startDate < mntLogs[k].endDate))
+        ) {
+          await Swal.fire(
+            "Error",
+            "System maintenance schedule is overlapping.",
+            "error"
+          );
+          return;
+        }
       }
     }
 
@@ -160,12 +209,12 @@ export default function RequestMaintenancePage() {
       const item = rows[i];
       const tmpItem = item;
 
-      tmpItem.minTime = '';
-      if (item.fromDate != '') {
+      tmpItem.minTime = "";
+      if (item.fromDate != "") {
         tmpItem.minDate = item.fromDate;
       }
       if (item.fromDate == item.toDate) {
-        if (item.fromTime != '') item.minTime = item.fromTime;
+        if (item.fromTime != "") item.minTime = item.fromTime;
       }
       tmpRows.push(tmpItem);
     }
@@ -173,7 +222,7 @@ export default function RequestMaintenancePage() {
     setRows(tmpRows);
   };
 
-  const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'System Maintenance' }];
+  const breadCrumbs = [{ name: "MANAGEMENT" }, { name: "System Maintenance" }];
   return (
     <div className="p-4">
       <BreadCrumbs breadCrumbs={breadCrumbs} />
@@ -298,7 +347,7 @@ export default function RequestMaintenancePage() {
                       <button
                         type="button"
                         className={`bg-[#dc3545] active:bg-[#de4060] text-white px-3 py-1 rounded-[4px] flex ${
-                          index ? '' : 'hidden'
+                          index ? "" : "hidden"
                         }`}
                         onClick={() => deleteRows(index)}
                       >
@@ -313,7 +362,7 @@ export default function RequestMaintenancePage() {
 
           <div className="flex justify-end gap-2 me-2">
             <Link
-              href={'/portal/system-maintenance'}
+              href={"/portal/system-maintenance"}
               aria-disabled={requestMntMut.isLoading}
             >
               <button
