@@ -6,6 +6,7 @@ import {
   SysMaintenance,
   SysMntInput,
   getMntLog,
+  getMntLogs,
   updateMntLog,
 } from '@/service/system-maintenance';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -35,6 +36,12 @@ export default function EditMaintenancePage() {
   const id = params?.id;
 
   usePwdValidityQuery(user?.id);
+
+  const mntLogsQry = useQuery({
+    queryKey: ["system-maintenance"],
+    queryFn: getMntLogs,
+    refetchOnWindowFocus: false,
+  });
 
   const getMntQry = useQuery({
     queryKey: ['getMnt', id],
@@ -98,6 +105,12 @@ export default function EditMaintenancePage() {
   };
 
   const submitForm = async () => {
+    let mntLogs: SysMaintenance[] = [];
+    if (mntLogsQry.data && "mntLogs" in mntLogsQry.data)
+      mntLogs = mntLogsQry.data?.mntLogs ?? [];
+    const startDate = new Date(mntInput.fromDate + " " + mntInput.fromTime).toISOString();
+    const endDate = new Date(mntInput.toDate + " " + mntInput.toTime).toISOString();
+
     if (mntInput.iRakyat === false && mntInput.iBizRakyat === false) {
       await Swal.fire(
         'Error',
@@ -105,6 +118,23 @@ export default function EditMaintenancePage() {
         'error'
       );
       return;
+    }
+
+    for (let k = 0; k < mntLogs.length; ++k) {
+      if (
+        ((mntInput.iRakyat && mntLogs[k].iRakyatYN) || (mntInput.iBizRakyat && mntLogs[k].iBizRakyatYN)) &&
+        ((endDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
+        (startDate > mntLogs[k].startDate && startDate < mntLogs[k].endDate) ||
+        (startDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
+        (startDate < mntLogs[k].startDate && endDate > mntLogs[k].endDate))
+      ) {
+        await Swal.fire(
+          "Error",
+          "System maintenance schedule is overlapping.",
+          "error"
+        );
+        return;
+      }
     }
 
     requestMntMut.mutate({
