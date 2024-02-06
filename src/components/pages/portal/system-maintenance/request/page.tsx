@@ -173,7 +173,9 @@ export default function RequestMaintenancePage() {
         if (
           ((item.iRakyat && rows[k].iRakyat) || (item.iBizRakyat && rows[k].iBizRakyat)) &&
           ((endDate > kStartDate && endDate < kEndDate) ||
-          (startDate > kStartDate && startDate < kEndDate))
+          (startDate > kStartDate && startDate < kEndDate) ||
+          (startDate >= kStartDate && endDate <= kEndDate) ||
+          (startDate <= kStartDate && endDate >= kEndDate))
         ) {
           await Swal.fire(
             "Error",
@@ -188,7 +190,9 @@ export default function RequestMaintenancePage() {
         if (
           ((item.iRakyat && mntLogs[k].iRakyatYN) || (item.iBizRakyat && mntLogs[k].iBizRakyatYN)) &&
           ((endDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
-          (startDate > mntLogs[k].startDate && startDate < mntLogs[k].endDate))
+          (startDate > mntLogs[k].startDate && startDate < mntLogs[k].endDate) ||
+          (startDate >= mntLogs[k].startDate && endDate <= mntLogs[k].endDate) ||
+          (startDate <= mntLogs[k].startDate && endDate >= mntLogs[k].endDate))
         ) {
           await Swal.fire(
             "Error",

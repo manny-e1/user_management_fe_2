@@ -139,11 +139,10 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
               )}
 
             {user?.role === "normal user 2" &&
-              mnt.submissionStatus === "New" &&
+              (mnt.submissionStatus === "New" || mnt.submissionStatus === "Edited") &&
               mnt.approvalStatus === "Pending" && (
                 <span
-                  on
-                  lick={handleDeleteClick}
+                  onClick={handleDeleteClick}
                   className="text-blue-500 cursor-pointer"
                 >
                   Delete
@@ -223,6 +222,11 @@ const CheckBox = ({ mnt }: { mnt: SysMaintenance }) => {
 };
 
 const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
+  const today = new Date().toISOString();
+  const startDate = new Date(mnt.startDate).toISOString();
+
+  console.log(mnt.approvalStatus, mnt.submittedAt)
+
   return (
     <div className="flex flex-col gap-1">
       {mnt.iRakyatYN ? (
@@ -231,11 +235,10 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
             <FiCircle size={10} className="inline me-1" />
             i-Rakyat
           </span>
-          {((mnt.iRakyatStatus != "" &&
-            mnt.approvalStatus != "Rejected" &&
-            mnt.submissionStatus !== "Delete") ||
-            (mnt.submissionStatus == "Marked" &&
-              mnt.approvalStatus !== "Pending")) && (
+          {startDate <= today &&
+            mnt.iRakyatStatus !== "" &&
+            mnt.approvalStatus !== "Pending" &&
+            (
             <span
               className={`${
                 mnt.iRakyatStatus == "C"
@@ -260,10 +263,11 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
             <FiCircle size={10} className="inline me-1" />
             i-BizRakyat
           </span>
-          {((mnt.iBizRakyatStatus != "" &&
-            mnt.approvalStatus != "Rejected" &&
-            mnt.submissionStatus !== "Delete") ||
-            mnt.submissionStatus == "Marked") && (
+          {
+            startDate <= today &&
+            mnt.iBizRakyatStatus !== "" &&
+            mnt.approvalStatus !== "Pending"&&
+            (
             <span
               className={`${
                 mnt.iBizRakyatStatus == "C"
