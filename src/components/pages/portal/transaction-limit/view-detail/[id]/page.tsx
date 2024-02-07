@@ -151,7 +151,7 @@ export default function ViewTransactionPage() {
         </span>
         <div className="flex flex-wrap text-sm mx-[calc(var(--bs-gutter-x)*-.5)] mt-[calc(var(--bs-gutter-y)*-1)] needs-validation space-y-10">
           <div className="w-full">
-            <h5 className="text-[#939ba2] text-[.925rem] font-semibold px-[calc(var(--bs-gutter-x)*.5)">
+            <h5 className="text-[#939ba2] text-[.925rem] font-semibold px-[calc(var(--bs-gutter-x)*.5) ml-2">
               Current Value
             </h5>
             <div className="w-full flex gap-1 max-md:flex-wrap">
@@ -418,7 +418,7 @@ export default function ViewTransactionPage() {
                   disabled={approve.isLoading || reject.isLoading}
                   type="submit"
                   id="btnApproved"
-                  className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
+                  className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                   onClick={handleApprove}
                 >
                   Approve

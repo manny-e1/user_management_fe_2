@@ -40,7 +40,7 @@ export default function ChangePasswordPage() {
       }
       Swal.fire({
         title: 'Success!',
-        text: `You\'ve successfully reset your password`,
+        text: `You\'ve successfully changed password. Please login using new password`,
         icon: 'success',
       }).then((_) => {
         router.push('/login');
@@ -115,7 +115,7 @@ export default function ChangePasswordPage() {
               id="confpwd"
               setPassword={setConfirmPassword}
               password={confirmPassword}
-              placeholder="Confirm password"
+              placeholder="Confirm new password"
             />
 
             {err.includes('match') && <p className="text-red-500">{err}</p>}
@@ -128,7 +128,7 @@ export default function ChangePasswordPage() {
               className="px-4 py-2.5 disabled:cursor-not-allowed disabled:opacity-50 rounded font-normal text-lg text-white bg-blue-500 hover:bg-blue-600 mr-2"
               disabled={resetPwdMut.isLoading}
             >
-              Submit
+              Update
             </button>
           </div>
         </form>

@@ -122,7 +122,7 @@ export default function ChangePasswordPortalPage() {
                 portal={true}
                 setPassword={setConfirmNewPwd}
                 password={confirmNewPwd}
-                placeholder="Confirm password"
+                placeholder="Confirm new password"
               />
               {err?.includes('match') && <p className="text-red-500">{err}</p>}
               {/* <div id="CheckPasswordMatch" className="col-sm-8 mt-[1px]"></div> */}
@@ -134,7 +134,7 @@ export default function ChangePasswordPortalPage() {
               <input
                 disabled={checkPwdMut.isLoading || chgPwdMut.isLoading}
                 type="submit"
-                value="Submit"
+                value="Update"
                 id="btnSaveNewPassword"
                 className="disabled:cursor-not-allowed disabled:opacity-50 text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
               />

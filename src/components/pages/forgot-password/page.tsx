@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
       if ('error' in data) {
         Swal.fire({
           title: 'Error!',
-          text: data.error,
+          text: 'Invalid Email',
           icon: 'error',
         });
         return;

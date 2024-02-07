@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs';
 import { GoPeople } from 'react-icons/go';
 import { HiOutlineLockClosed } from 'react-icons/hi';
-import { FiSettings } from 'react-icons/fi'
+import { FiSettings, FiHome } from 'react-icons/fi';
 import { VscSettings } from 'react-icons/vsc';
 
 export default function Sidebar() {
@@ -58,7 +58,7 @@ export default function Sidebar() {
           />
         </li>
         {
-          (user?.role !== 'normal user 1' && user?.role !== 'normal user 2') && 
+          (user?.role !== 'admin' && user?.role !== 'admin 2' && user?.role !== 'normal user 1' && user?.role !== 'normal user 2') && 
           <li className={`py-2.5 mb-5 text-[rgba(233,236,239,.5)] px-5 hover-active-bg ${
             pathname?.includes('/dashboard') &&
             'active-bg border-l-[3px] border-[#3b7ddd] -ml-1'
@@ -68,7 +68,7 @@ export default function Sidebar() {
               as="/portal/dashboard"
               className="flex flex-1 items-center gap-3"
             >
-              <VscSettings size={20} />
+              <FiHome size={20} />
               Dashboard
             </Link>
           </li>

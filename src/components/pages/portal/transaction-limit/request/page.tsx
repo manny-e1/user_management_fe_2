@@ -237,7 +237,7 @@ export default function RequestTransactionPage() {
               className="disabled:cursor-not-allowed disabled:opacity-50 mt-3 text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
             >
               {' '}
-              Submit{' '}
+              Save{' '}
             </button>
           </div>
         </form>
