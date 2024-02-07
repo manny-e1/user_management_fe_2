@@ -172,8 +172,8 @@ export default function RequestMaintenancePage() {
         const kEndDate = new Date(rows[k].toDate + " " + rows[k].toTime).toISOString();
         if (
           ((item.iRakyat && rows[k].iRakyat) || (item.iBizRakyat && rows[k].iBizRakyat)) &&
-          ((endDate > kStartDate && endDate < kEndDate) ||
-          (startDate > kStartDate && startDate < kEndDate) ||
+          ((endDate >= kStartDate && endDate <= kEndDate) ||
+          (startDate >= kStartDate && startDate <= kEndDate) ||
           (startDate >= kStartDate && endDate <= kEndDate) ||
           (startDate <= kStartDate && endDate >= kEndDate))
         ) {
@@ -189,8 +189,8 @@ export default function RequestMaintenancePage() {
       for (let k = 0; k < mntLogs.length; ++k) {
         if (
           ((item.iRakyat && mntLogs[k].iRakyatYN) || (item.iBizRakyat && mntLogs[k].iBizRakyatYN)) &&
-          ((endDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
-          (startDate > mntLogs[k].startDate && startDate < mntLogs[k].endDate) ||
+          ((endDate >= mntLogs[k].startDate && endDate <= mntLogs[k].endDate) ||
+          (startDate >= mntLogs[k].startDate && startDate <= mntLogs[k].endDate) ||
           (startDate >= mntLogs[k].startDate && endDate <= mntLogs[k].endDate) ||
           (startDate <= mntLogs[k].startDate && endDate >= mntLogs[k].endDate))
         ) {
