@@ -11,6 +11,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FiCheckCircle } from 'react-icons/fi';
 import moment from 'moment';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
@@ -125,7 +126,7 @@ export default function ViewMaintenancePage() {
       <BreadCrumbs breadCrumbs={breadCrumbs} />
       <Section outerTitle="OBW System Maintenance" innerTitle="">
         <div className="w-full flex gap-2 text-[#495057]">
-          <div className="w-1/3">
+          <div className="w-2/3">
             <div>
               <div className="w-[120px] inline-block">Submitted Date</div>
               <div className="font-bold inline-block">
@@ -144,7 +145,7 @@ export default function ViewMaintenancePage() {
               </div>
             </div>
           </div>
-          <div className="w-1/3">
+          <div className="w-2/3">
             <div>
               <div className="w-[200px] inline-block">
                 Approved/Rejected Date
@@ -189,7 +190,7 @@ export default function ViewMaintenancePage() {
             </div>
           </div>
         </div>
-        <table className="mt-3 text-[#495057]">
+        <table className="mt-3 text-[#495057] w-full">
           <tbody>
             <tr>
               <td className="font-bold pe-1">From Date</td>
@@ -197,7 +198,7 @@ export default function ViewMaintenancePage() {
               <td className="font-bold px-1">To Date</td>
               <td className="font-bold px-1">To Time</td>
               <td className="font-bold px-1" colSpan={2}></td>
-              <td className="font-bold ps-1"></td>
+              <td className="font-bold px-1">Maintenance Status</td>
             </tr>
             <tr>
               <td className="pe-1">
@@ -252,7 +253,7 @@ export default function ViewMaintenancePage() {
                   required
                 />
               </td>
-              <td className="ps-3 pe-2">
+              <td className="ps-3" style={{paddingInlineEnd:'2.75rem'}}>
                 <input
                   readOnly
                   type="checkbox"
@@ -260,8 +261,26 @@ export default function ViewMaintenancePage() {
                   className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
                 />
                 &nbsp;iRakyat
+                {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
+                  <>
+                    {user?.role === 'normal user 2' && (
+                      <>
+                        {mntLog?.iRakyatYN &&
+                          mntLog?.iRakyatStatus == 'A' &&
+                          (mntLog?.approvalStatus == 'Approved' ||
+                            mntLog?.approvalStatus === 'Rejected' ||
+                            (mntLog?.approvalStatus == 'Pending' &&
+                              mntLog?.submissionStatus == 'Marked')) && (
+                            <div className="flex items-center select-none" style={{float:'right', marginTop:'0.2rem'}}>
+                              <FiCheckCircle className="me-1" />
+                            </div>
+                        )}
+                      </>
+                      )}
+                  </>
+                )}
               </td>
-              <td className="ps-2">
+              <td className="ps-3" style={{paddingInlineEnd:'2.75rem'}}>
                 <input
                   readOnly
                   type="checkbox"
@@ -269,11 +288,102 @@ export default function ViewMaintenancePage() {
                   className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
                 />
                 &nbsp;iBizRakyat
+                {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
+                  <>
+                    {user?.role === 'normal user 2' && (
+                      <>
+                        {mntLog?.iBizRakyatYN &&
+                          mntLog?.iBizRakyatStatus == 'A' &&
+                          (mntLog?.approvalStatus == 'Approved' ||
+                            mntLog?.approvalStatus === 'Rejected' ||
+                            (mntLog?.approvalStatus == 'Pending' &&
+                              mntLog?.submissionStatus == 'Marked')) && (
+                            <div className="flex items-center select-none" style={{float:'right', marginTop:'0.2rem'}}>
+                              <FiCheckCircle className="me-1" />
+                            </div>
+                        )}
+                      </>
+                      )}
+                  </>
+                )}
+              </td>
+              <td className="ps-2">
+                {mntLog?.iRakyatYN && mntLog?.iBizRakyatYN ? (
+                  <div className="flex justify-center items-center">
+                    {((mntLog?.iRakyatStatus != '' || mntLog?.iBizRakyatStatus != '' && 
+                      mntLog?.approvalStatus != 'Rejected' &&
+                      mntLog?.submissionStatus !== 'Delete') ||
+                      (mntLog?.submissionStatus == 'Marked' &&
+                        mntLog?.approvalStatus !== 'Pending')) && (
+                      <span
+                        className={`${
+                          mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C'
+                            ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                            : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                        }`}
+                      >
+                        {mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' || mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC' ? (
+                            <>Active</>
+                          ) : (
+                            <>Completed</>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                ) : 
+                  mntLog?.iRakyatYN ? (
+                    <div className="flex justify-center items-center">
+                      {((mntLog?.iRakyatStatus != '' &&
+                        mntLog?.approvalStatus != 'Rejected' &&
+                        mntLog?.submissionStatus !== 'Delete') ||
+                        (mntLog?.submissionStatus == 'Marked' &&
+                          mntLog?.approvalStatus !== 'Pending')) && (
+                        <span
+                          className={`${
+                            mntLog?.iRakyatStatus == 'C'
+                              ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                          }`}
+                        >
+                          {mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' ? (
+                            <>Active</>
+                          ) : (
+                            <>Completed</>
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  ) : 
+                  mntLog?.iBizRakyatYN ? (
+                    <div className="flex justify-center items-center">
+                      {((mntLog?.iBizRakyatStatus != '' &&
+                        mntLog?.approvalStatus != 'Rejected' &&
+                        mntLog?.submissionStatus !== 'Delete') ||
+                        mntLog?.submissionStatus == 'Marked') && (
+                        <span
+                          className={`${
+                            mntLog?.iBizRakyatStatus == 'C'
+                              ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                          }`}
+                        >
+                          {mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC' ? (
+                            <>Active</>
+                          ) : (
+                            <>Completed</>
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                }
               </td>
             </tr>
           </tbody>
         </table>
-        <div className="flex justify-end gap-1">
+        <div className="flex justify-end gap-1 mt-4">
           <button
             disabled={approveMut.isLoading || rejectMut.isLoading}
             type="submit"
