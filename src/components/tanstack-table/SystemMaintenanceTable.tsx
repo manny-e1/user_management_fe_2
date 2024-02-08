@@ -17,7 +17,7 @@ import { useState } from "react";
 const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
   const { id } = mnt;
   const user = usePermission();
-  const channelStatus = mnt.iRakyatStatus + mnt.iBizRakyatStatus;
+  let channelStatus = (mnt.iRakyatStatus === "CC" ? "A" : mnt.iRakyatStatus) + (mnt.iBizRakyatStatus === "CC" ? "A" : mnt.iBizRakyatStatus);
 
   const queryClient = useQueryClient();
 
@@ -121,8 +121,8 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
         View
       </Link>
       {mnt.submissionStatus !== "Delete" &&
-        mnt.iBizRakyatStatus !== "C" &&
-        mnt.iRakyatStatus !== "C" && (
+        (mnt.iBizRakyatStatus !== "C" ||
+        mnt.iRakyatStatus !== "C") && (
           <>
             {user?.role == "normal user 2" &&
               (channelStatus.indexOf("C") == -1 ||
@@ -203,9 +203,15 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
 };
 
 const CheckBox = ({ mnt }: { mnt: SysMaintenance }) => {
+  let visibility = mnt.iBizRakyatStatus !== "C" && mnt.iRakyatStatus !== "C";
+
+  if ((mnt.iBizRakyatStatus === "C" || mnt.iRakyatStatus === "C") && mnt.approvalStatus === "Pending")
+    visibility = true;
+
   return (
     <div className="p-1">
-      {mnt.iBizRakyatStatus !== "C" && mnt.iRakyatStatus !== "C" && (
+      {
+        visibility && (
         <>
           {mnt.approvalStatus !== "Rejected" &&
             mnt.approvalStatus !== "Approved" && (
@@ -225,7 +231,12 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
   const today = new Date().toISOString();
   const startDate = new Date(mnt.startDate).toISOString();
 
-  console.log(mnt.approvalStatus, mnt.submittedAt)
+  let b2bStatusVisible = mnt.iRakyatStatus === "C" || (startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC"));
+  let b2cStatusVisible = mnt.iBizRakyatStatus === "C" || (startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC"));
+
+  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C"))  b2bStatusVisible = true;
+  if((mnt.approvalStatus !== "Pending" && mnt.iBizRakyatStatus === "C"))  b2cStatusVisible = true;
+  console.log(mnt);
 
   return (
     <div className="flex flex-col gap-1">
@@ -235,9 +246,8 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
             <FiCircle size={10} className="inline me-1" />
             i-Rakyat
           </span>
-          {startDate <= today &&
-            mnt.iRakyatStatus !== "" &&
-            mnt.approvalStatus !== "Pending" &&
+          {
+            b2bStatusVisible &&
             (
             <span
               className={`${
@@ -246,11 +256,13 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
                   : "bg-red-100 text-red-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-red-400 border border-red-400"
               }`}
             >
-              {mnt.iRakyatStatus == "A" || mnt.iRakyatStatus === "CC" ? (
-                <>Active</>
-              ) : (
-                <>Complete</>
-              )}
+              {
+                startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC") ? (
+                  <>Active</>
+                ) : (mnt.iRakyatStatus == "C") ? (
+                  <>Complete</>
+                ) : <></>
+              }
             </span>
           )}
         </div>
@@ -264,9 +276,7 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
             i-BizRakyat
           </span>
           {
-            startDate <= today &&
-            mnt.iBizRakyatStatus !== "" &&
-            mnt.approvalStatus !== "Pending"&&
+            b2cStatusVisible &&
             (
             <span
               className={`${
@@ -275,11 +285,13 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
                   : "bg-red-100 text-red-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-red-400 border border-red-400"
               }`}
             >
-              {mnt.iBizRakyatStatus == "A" || mnt.iBizRakyatStatus === "CC" ? (
-                <>Active</>
-              ) : (
-                <>Complete</>
-              )}
+              {
+                startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC") ? (
+                  <>Active</>
+                ) : (mnt.iBizRakyatStatus == "C") ? (
+                  <>Complete</>
+                ) : <></>
+              }
             </span>
           )}
         </div>
