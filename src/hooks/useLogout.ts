@@ -11,6 +11,7 @@ export function useLogout(router: AppRouterInstance) {
         Cookies.remove('user');
         sessionStorage.clear();
         Cookies.remove('rememberMe');
+        Cookies.remove('token');
         router.push('/login');
       }
     },

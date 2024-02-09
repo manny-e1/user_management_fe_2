@@ -21,7 +21,6 @@ export default function SigninPage() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [trialCount, setTrialCount] = useState(1);
 
   const loginMut = useMutation({
     mutationFn: login,
