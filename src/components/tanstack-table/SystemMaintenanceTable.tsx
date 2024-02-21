@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import { API_URL } from "@/lib/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { SortingState } from "@tanstack/react-table";
 
 const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
   const { id } = mnt;
@@ -313,7 +314,7 @@ export default function SystemMaintenanceTable({
 }: {
   data: SysMaintenance[];
   hide: boolean;
-  onClick: () => void;
+  onClick: (sorting?: SortingState) => void;
 }) {
   return (
     <Table

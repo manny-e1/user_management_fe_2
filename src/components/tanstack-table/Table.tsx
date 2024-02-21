@@ -109,7 +109,7 @@ export default function Table<T extends { id: string }>({
   route: string;
   hide?: boolean;
   hideUtility?: boolean;
-  onClick?: () => void;
+  onClick?: (sorting: SortingState) => void;
 }) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -197,7 +197,7 @@ export default function Table<T extends { id: string }>({
             <>
               <button
                 id="btnExport"
-                onClick={onClick}
+                onClick={() => onClick && onClick(sorting)}
                 className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
               >
                 Export
