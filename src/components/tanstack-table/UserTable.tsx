@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import Modal from '../Modal';
 import Swal from 'sweetalert2';
+import { SortingState } from '@tanstack/react-table';
 
 export type Action = {
   id: string;
@@ -160,12 +161,19 @@ function actions({ id, status, email }: Action) {
   return <Actions id={id} status={status} email={email} />;
 }
 
-export default function UserTable({ data }: { data: User[] }) {
+export default function UserTable({
+  data,
+  onClick
+}: {
+  data: User[],
+  onClick: (sorting?: SortingState) => void;
+}) {
   return (
     <Table
       data={data}
       columns={userListingColums(actions)}
       route="/portal/users/create"
+      onClick={onClick}
     />
   );
 }
