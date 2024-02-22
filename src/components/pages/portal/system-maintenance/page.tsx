@@ -124,12 +124,18 @@ export default function SystemMaintenancePage() {
       showCancelButton: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const reason = result.value as string;
-        rejectMut.mutate({
-          ids: ids,
-          email: user?.email ?? '',
-          msg: reason,
-        });
+        if (result.value) {
+          console.log({ value: result.value });
+          const reason = result.value as string;
+          rejectMut.mutate({
+            ids: ids,
+            email: user?.email ?? '',
+            msg: reason,
+          });
+        } else {
+          Swal.fire('Error', 'You must input the reason.', 'error')
+            .catch((error) => console.log(error));
+        }
       }
     });
   };
@@ -164,14 +170,14 @@ export default function SystemMaintenancePage() {
       
       if (row.iRakyatYN) {
         channel += "i-Rakyat";
-        if (row.iRakyatStatus == "A" || row.iRakyatStatus == "CC") channel += "(Active)";
+        if (row.iRakyatStatus == "A") channel += "(Active)";
         else if(row.iRakyatStatus == "C") channel += "(Complete)";
       }
 
       if(row.iBizRakyatYN) {
         if (row.iRakyatYN)  channel += ", ";
         channel += "i-BizRakyat";
-        if (row.iBizRakyatStatus == "A" || row.iBizRakyatStatus == "CC") channel += "(Active)";
+        if (row.iBizRakyatStatus == "A") channel += "(Active)";
         else if(row.iBizRakyatStatus == "C") channel += "(Complete)";
       }
 
@@ -206,7 +212,7 @@ export default function SystemMaintenancePage() {
         <SystemMaintenanceTable
           onClick={handleExport}
           data={mntLogsQry.isFetching ? [] : mntLogs}
-          hide={false}
+          hide={user?.role === 'manager 2'}
         />
         {user?.role === 'manager 2' && (
           <>
@@ -214,7 +220,7 @@ export default function SystemMaintenancePage() {
               <button
                 type="submit"
                 id="btnApproved"
-                className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.75rem] py-[0.25rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
+                className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.75rem] py-[0.25rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                 onClick={handleApprove}
               >
                 Approve
@@ -230,6 +236,42 @@ export default function SystemMaintenancePage() {
             </div>
           </>
         )}
+        <hr className="my-3" />
+        <div className="mt-5 text-sm leading-[2.0]">
+          <fieldset className="rounded xs:w-full border p-1 sm:w-2/4 md:w-2/4">
+            <legend className="text-sm-start fs-4 float-none w-auto px-3 hover:cursor-pointer">
+              Legend for Submission Status:
+            </legend>
+            <table>
+              <tbody>
+                <tr>
+                  <td className="pl-1">New</td>
+                  <td>: New request of system maintenance.</td>
+                </tr>
+                <tr>
+                  <td className="pl-1">Edit</td>
+                  <td>: Any update on the record Eg. Extension of completion time.</td>
+                </tr>
+                <tr>
+                  <td className="pl-1">Delete</td>
+                  <td>: Delete of request by normal user.</td>
+                </tr>
+                <tr>
+                  <td className="pl-1">Marked</td>
+                  <td>: Marked as completed if complete earlier than actual scheduled time.</td>
+                </tr>
+                <tr>
+                  <td className="pl-1">RTP</td>
+                  <td>: Real-Time Payment.</td>
+                </tr>
+                <tr>
+                  <td className="pl-1">CS</td>
+                  <td>: Consent (AutoDebit)</td>
+                </tr>
+              </tbody>
+            </table>
+          </fieldset>
+        </div>
       </Section>
     </div>
   );
