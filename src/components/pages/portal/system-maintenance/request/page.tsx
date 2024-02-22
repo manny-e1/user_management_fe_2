@@ -247,7 +247,7 @@ export default function RequestMaintenancePage() {
               onClick={() => addMntRow()}
             >
               <FiPlus className="inline-block bg-blue-600 rounded-full text-white me-1" />
-              Add New Shedule
+              Add Schedule
             </button>
           </div>
           <table className="">
@@ -380,7 +380,7 @@ export default function RequestMaintenancePage() {
               className={`bg-[#3b7ddd] hover:bg-[#326abc] active:bg-[#2f64b1] text-white px-3 py-1 rounded-[4px] flex`}
               onClick={handleSaveClicked}
             >
-              Save
+              Submit
             </button>
           </div>
         </form>

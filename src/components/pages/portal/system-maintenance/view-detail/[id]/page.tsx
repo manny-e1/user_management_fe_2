@@ -11,6 +11,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { FiCheckCircle } from 'react-icons/fi';
 import moment from 'moment';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
@@ -21,7 +22,11 @@ export default function ViewMaintenancePage() {
   const user = usePermission();
   const params = useParams();
   const router = useRouter();
+  const [isStartDate, setIsStartDate] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const [b2bVisible, setB2BVisible] = useState<boolean>(false);
+  const [b2cVisible, setB2CVisible] = useState<boolean>(false);
+  const [b2bnb2cVisible, setB2BnB2CVisible] = useState<boolean>(false);
   const [mntLog, setMntLog] = useState<SysMaintenance>();
 
   usePwdValidityQuery(user?.id);
@@ -84,6 +89,17 @@ export default function ViewMaintenancePage() {
     if (getMntQry.data) {
       if ('mntLog' in getMntQry.data) {
         setMntLog(getMntQry.data.mntLog);
+
+        const today = new Date().toISOString();
+        const startDate = new Date(getMntQry.data.mntLog.startDate).toISOString();
+        if(startDate <= today) setIsStartDate(true);
+
+        setB2BVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC")));
+        setB2CVisible(getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC")));
+        setB2BnB2CVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && ((getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC") && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC"))));
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C")) setB2BVisible(true);
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2CVisible(true);
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2BnB2CVisible(true);
       }
     }
   }, [getMntQry.data]);
@@ -104,12 +120,18 @@ export default function ViewMaintenancePage() {
       showCancelButton: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const reason = result.value as string;
-        rejectMut.mutate({
-          ids: [id],
-          email: user?.email ?? '',
-          msg: reason,
-        });
+        if (result.value) {
+          console.log({ value: result.value });
+          const reason = result.value as string;
+          rejectMut.mutate({
+            ids: [id],
+            email: user?.email ?? '',
+            msg: reason,
+          });
+        } else {
+          Swal.fire('Error', 'You must input the reason.', 'error')
+            .catch((error) => console.log(error));
+        }
       }
     });
   };
@@ -125,7 +147,7 @@ export default function ViewMaintenancePage() {
       <BreadCrumbs breadCrumbs={breadCrumbs} />
       <Section outerTitle="OBW System Maintenance" innerTitle="">
         <div className="w-full flex gap-2 text-[#495057]">
-          <div className="w-1/3">
+          <div className="w-2/3">
             <div>
               <div className="w-[120px] inline-block">Submitted Date</div>
               <div className="font-bold inline-block">
@@ -144,7 +166,7 @@ export default function ViewMaintenancePage() {
               </div>
             </div>
           </div>
-          <div className="w-1/3">
+          <div className="w-2/3">
             <div>
               <div className="w-[200px] inline-block">
                 Approved/Rejected Date
@@ -189,7 +211,7 @@ export default function ViewMaintenancePage() {
             </div>
           </div>
         </div>
-        <table className="mt-3 text-[#495057]">
+        <table className="mt-3 text-[#495057] w-full">
           <tbody>
             <tr>
               <td className="font-bold pe-1">From Date</td>
@@ -197,7 +219,7 @@ export default function ViewMaintenancePage() {
               <td className="font-bold px-1">To Date</td>
               <td className="font-bold px-1">To Time</td>
               <td className="font-bold px-1" colSpan={2}></td>
-              <td className="font-bold ps-1"></td>
+              <td className="font-bold px-1 text-center">Maintenance Status</td>
             </tr>
             <tr>
               <td className="pe-1">
@@ -252,7 +274,7 @@ export default function ViewMaintenancePage() {
                   required
                 />
               </td>
-              <td className="ps-3 pe-2">
+              <td className="ps-3" style={{paddingInlineEnd:'2.75rem'}}>
                 <input
                   readOnly
                   type="checkbox"
@@ -260,8 +282,26 @@ export default function ViewMaintenancePage() {
                   className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
                 />
                 &nbsp;iRakyat
+                {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
+                  <>
+                    {user?.role === 'normal user 2' && (
+                      <>
+                        {mntLog?.iRakyatYN &&
+                          mntLog?.iRakyatStatus == 'A' &&
+                          (mntLog?.approvalStatus == 'Approved' ||
+                            mntLog?.approvalStatus === 'Rejected' ||
+                            (mntLog?.approvalStatus == 'Pending' &&
+                              mntLog?.submissionStatus == 'Marked')) && (
+                            <div className="flex items-center select-none" style={{float:'right', marginTop:'0.2rem'}}>
+                              <FiCheckCircle className="me-1" />
+                            </div>
+                        )}
+                      </>
+                      )}
+                  </>
+                )}
               </td>
-              <td className="ps-2">
+              <td className="ps-3" style={{paddingInlineEnd:'2.75rem'}}>
                 <input
                   readOnly
                   type="checkbox"
@@ -269,11 +309,100 @@ export default function ViewMaintenancePage() {
                   className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
                 />
                 &nbsp;iBizRakyat
+                {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
+                  <>
+                    {user?.role === 'normal user 2' && (
+                      <>
+                        {mntLog?.iBizRakyatYN &&
+                          mntLog?.iBizRakyatStatus == 'A' &&
+                          (mntLog?.approvalStatus == 'Approved' ||
+                            mntLog?.approvalStatus === 'Rejected' ||
+                            (mntLog?.approvalStatus == 'Pending' &&
+                              mntLog?.submissionStatus == 'Marked')) && (
+                            <div className="flex items-center select-none" style={{float:'right', marginTop:'0.2rem'}}>
+                              <FiCheckCircle className="me-1" />
+                            </div>
+                        )}
+                      </>
+                      )}
+                  </>
+                )}
+              </td>
+              <td className="ps-2">
+                {mntLog?.iRakyatYN && mntLog?.iBizRakyatYN ? (
+                  <div className="flex justify-center items-center">
+                    { 
+                      b2bnb2cVisible && 
+                      (
+                      <span
+                        className={`${
+                          mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C'
+                            ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                            : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                        }`}
+                      >
+                        { isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' || mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
+                            <>Active</>
+                          ) : (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') ? (
+                            <>Completed</>
+                          ) : <>Check1</>    
+                        }
+                      </span>
+                    )}
+                  </div>
+                ) : 
+                  mntLog?.iRakyatYN ? (
+                    <div className="flex justify-center items-center">
+                      {
+                        b2bVisible && 
+                        (
+                        <span
+                          className={`${
+                            mntLog?.iRakyatStatus == 'C'
+                              ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                          }`}
+                        >
+                          { isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC') ? (
+                              <>Active</>
+                            ) : (mntLog?.iRakyatStatus == 'C') ? (
+                              <>Completed</>
+                            ) : <>Check2</>
+                          }
+                        </span>
+                      )}
+                    </div>
+                  ) : 
+                  mntLog?.iBizRakyatYN ? (
+                    <div className="flex justify-center items-center">
+                      {
+                        b2cVisible && (
+                        <span
+                          className={`${
+                            mntLog?.iBizRakyatStatus == 'C'
+                              ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                          }`}
+                        >
+                          { 
+                            isStartDate && (mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
+                              <>Active</>
+                            ) : (mntLog?.iBizRakyatStatus == 'C') ? (
+                              <>Completed</>
+                            ) : <>Check3</>
+                          }
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                }
               </td>
             </tr>
           </tbody>
         </table>
-        <div className="flex justify-end gap-1">
+        <div className="flex justify-end gap-1 mt-4">
           <button
             disabled={approveMut.isLoading || rejectMut.isLoading}
             type="submit"
@@ -303,7 +432,7 @@ export default function ViewMaintenancePage() {
                   disabled={approveMut.isLoading || rejectMut.isLoading}
                   type="submit"
                   id="btnApproved"
-                  className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.75rem] py-[0.25rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
+                  className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.75rem] py-[0.25rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                   onClick={handleApproveClick}
                 >
                   Approve
