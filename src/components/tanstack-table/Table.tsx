@@ -71,6 +71,7 @@ const mntStatusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     row.getValue('channelStatus'),
     maintenanceStatus
   );
+  //console.log(row);
 
   const period = row.getValue('period') as string;
   const startDate = new Date(period.split('@')[0]);
@@ -120,6 +121,8 @@ export default function Table<T extends { id: string }>({
     fromDate: '',
     toDate: '',
   });
+  const isUserTable = route.includes('users');
+  const isUserGroupTable = route.includes('user-groups');
   const isTxnTable = route.includes('transaction');
   const isMntTable = route.includes('maintenance');
 
@@ -195,20 +198,29 @@ export default function Table<T extends { id: string }>({
         <div className="flex items-center gap-2 ms-2">
           {!hideUtility ? (
             <>
-              <button
-                id="btnExport"
-                onClick={() => onClick && onClick(sorting)}
-                className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
-              >
-                Export
-              </button>
+              {!isUserTable ? (
+                !isUserGroupTable ? (
+                <button
+                  id="btnExport"
+                  onClick={() => onClick && onClick(sorting)}
+                  className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
+                >
+                  Export
+                </button>
+                ) : (
+                  <></>
+                )
+              ) : (
+                <></>
+              )}
               {!hide ? (
                 <button
                   id="btnSave"
                   onClick={(e) => router.push(route)}
                   className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                 >
-                  {isTxnTable ? 'Request' : 'Request'}
+                  { isTxnTable ? '+ New Request' : 
+                    isMntTable ? '+ Create Schedule': '+ Add' }
                 </button>
               ) : (
                 <></>

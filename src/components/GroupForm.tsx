@@ -110,7 +110,7 @@ export default function GroupForm({
         <div className="flex items-stretch flex-wrap w-full">
           <div className="pb-5 w-full space-y-2">
             <label htmlFor="txtName" className="mb-2">
-              Name
+              Group Name
             </label>
             <input
               type="text"
@@ -125,7 +125,7 @@ export default function GroupForm({
           </div>
           <div className="pb-5 w-full space-y-2">
             <label htmlFor="ddlUserRole" className="mb-2">
-              Role
+              User Role
             </label>
             <select
               className="form-select"

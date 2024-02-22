@@ -16,7 +16,7 @@ export const transactionListingColums = (
     },
 
     {
-      header: 'Date Time',
+      header: 'Submit Date & Time',
       accessorFn: (row) => row.createdAt,
       accessorKey: 'createdAt',
       cell: (props) => props.cell.getValue(),

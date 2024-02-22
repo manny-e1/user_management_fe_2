@@ -8,6 +8,7 @@ import { usePermission } from '@/hooks/usePermission';
 export const maintenanceListingColumns = (
   checkboxes: (mnt: SysMaintenance) => JSX.Element,
   channels: (mnt: SysMaintenance) => JSX.Element,
+  statuss: (mnt: SysMaintenance) => JSX.Element,
   actions: (mnt: SysMaintenance) => JSX.Element
 ) => {
   let columns: ColumnDef<SysMaintenance>[] = [];
@@ -31,9 +32,9 @@ export const maintenanceListingColumns = (
         );
       },
       cell: (props) =>
-        moment(props.row.original.startDate).format('DD/MM/YYYY HH:mm') +
+        moment(props.row.original.startDate).format('DD/MM/YYYY hh:mm A') +
         ' - ' +
-        moment(props.row.original.endDate).format('DD/MM/YYYY HH:mm'),
+        moment(props.row.original.endDate).format('DD/MM/YYYY hh:mm A'),
     },
     {
       enablePinning: true,
@@ -61,6 +62,31 @@ export const maintenanceListingColumns = (
       cell: (props) => channels(props.row.original),
     },
     {
+      enablePinning: true,
+      header: 'Maintenance Status',
+      accessorKey: 'maintenanceStatus',
+      accessorFn: (row) => {
+        let res = '';
+        if (
+          (row.iRakyatStatus != '' &&
+            row.approvalStatus != 'Pending' &&
+            row.approvalStatus != 'Rejected') ||
+          row.submissionStatus == 'Marked'
+        )
+          res += row.iRakyatStatus;
+        if (
+          (row.iBizRakyatStatus != '' &&
+            row.approvalStatus != 'Pending' &&
+            row.approvalStatus != 'Rejected') ||
+          row.submissionStatus == 'Marked'
+        )
+          res += row.iBizRakyatStatus;
+        return res;
+      },
+      enableSorting: false,
+      cell: (props) => statuss(props.row.original),
+    },
+    {
       header: 'Submission',
       accessorFn: (row) => row.submissionStatus,
       accessorKey: 'submissionStatus',
@@ -78,7 +104,7 @@ export const maintenanceListingColumns = (
       accessorFn: (row) => row.submittedAt,
       accessorKey: 'submittedAt',
       cell: (props) =>
-        moment(props.row.original.submittedAt).format('DD/MM/YYYY HH:mm:ss'),
+        moment(props.row.original.submittedAt).format('DD/MM/YYYY hh:mm A'),
     },
     {
       header: 'Action',

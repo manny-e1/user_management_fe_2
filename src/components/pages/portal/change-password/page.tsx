@@ -22,10 +22,16 @@ export default function ChangePasswordPortalPage() {
     mutationFn: resetPassword,
     onSuccess: (data) => {
       if ('error' in data) {
+        // Swal.fire({
+        //   title: 'Error!',
+        //   text: data.error,
+        //   icon: 'error',
+        // });
         Swal.fire({
-          title: 'Error!',
-          text: data.error,
-          icon: 'error',
+          title: 'Info',
+          html: `<div class="text-sm-start">` + data.error + `</div>`,
+          icon: 'info',
+          showCloseButton: true,
         });
         return;
       }
@@ -60,7 +66,7 @@ export default function ChangePasswordPortalPage() {
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
     if (newPwd !== confirmNewPwd) {
-      setErr("the passwords don't match");
+      setErr("Password not matching");
       return;
     }
     setErr(null);
@@ -122,7 +128,8 @@ export default function ChangePasswordPortalPage() {
                 portal={true}
                 setPassword={setConfirmNewPwd}
                 password={confirmNewPwd}
-                placeholder="Confirm password"
+                placeholder="Confirm new password"
+                comparePassword={newPwd}
               />
               {err?.includes('match') && <p className="text-red-500">{err}</p>}
               {/* <div id="CheckPasswordMatch" className="col-sm-8 mt-[1px]"></div> */}
@@ -134,7 +141,7 @@ export default function ChangePasswordPortalPage() {
               <input
                 disabled={checkPwdMut.isLoading || chgPwdMut.isLoading}
                 type="submit"
-                value="Submit"
+                value="Update"
                 id="btnSaveNewPassword"
                 className="disabled:cursor-not-allowed disabled:opacity-50 text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
               />
