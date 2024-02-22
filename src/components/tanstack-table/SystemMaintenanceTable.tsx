@@ -7,7 +7,7 @@ import {
   deleteMntLog,
 } from "../../service/system-maintenance";
 import { maintenanceListingColumns } from "@/lib/maintenance-listing-columns";
-import { FiCheckCircle, FiCircle } from "react-icons/fi";
+import { FiCheckCircle } from "react-icons/fi";
 import { usePermission } from "@/hooks/usePermission";
 import Swal from "sweetalert2";
 import { API_URL } from "@/lib/config";
@@ -229,43 +229,13 @@ const CheckBox = ({ mnt }: { mnt: SysMaintenance }) => {
 };
 
 const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
-  const today = new Date().toISOString();
-  const startDate = new Date(mnt.startDate).toISOString();
-
-  let b2bStatusVisible = mnt.iRakyatStatus === "C" || (startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC"));
-  let b2cStatusVisible = mnt.iBizRakyatStatus === "C" || (startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC"));
-
-  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C"))  b2bStatusVisible = true;
-  if((mnt.approvalStatus !== "Pending" && mnt.iBizRakyatStatus === "C"))  b2cStatusVisible = true;
-  console.log(mnt);
-
   return (
     <div className="flex flex-col gap-1">
       {mnt.iRakyatYN ? (
         <div className="flex justify-between items-center">
           <span className="flex items-center">
-            <FiCircle size={10} className="inline me-1" />
             i-Rakyat
           </span>
-          {
-            b2bStatusVisible &&
-            (
-            <span
-              className={`${
-                mnt.iRakyatStatus == "C"
-                  ? "bg-gray-100 text-gray-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-400 border border-gray-500"
-                  : "bg-red-100 text-red-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-red-400 border border-red-400"
-              }`}
-            >
-              {
-                startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC") ? (
-                  <>Active</>
-                ) : (mnt.iRakyatStatus == "C") ? (
-                  <>Complete</>
-                ) : <></>
-              }
-            </span>
-          )}
         </div>
       ) : (
         <></>
@@ -273,28 +243,8 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
       {mnt.iBizRakyatYN ? (
         <div className="flex justify-between items-center">
           <span className="flex items-center">
-            <FiCircle size={10} className="inline me-1" />
             i-BizRakyat
           </span>
-          {
-            b2cStatusVisible &&
-            (
-            <span
-              className={`${
-                mnt.iBizRakyatStatus == "C"
-                  ? "bg-gray-100 text-gray-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-400 border border-gray-500"
-                  : "bg-red-100 text-red-800 text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-red-400 border border-red-400"
-              }`}
-            >
-              {
-                startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC") ? (
-                  <>Active</>
-                ) : (mnt.iBizRakyatStatus == "C") ? (
-                  <>Complete</>
-                ) : <></>
-              }
-            </span>
-          )}
         </div>
       ) : (
         <></>
@@ -303,8 +253,101 @@ const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
   );
 };
 
+const Status = ({ mnt }: { mnt: SysMaintenance }) => {
+  const today = new Date().toISOString();
+  const startDate = new Date(mnt.startDate).toISOString();
+
+  let b2bStatusVisible = mnt.iRakyatStatus === "C" || (startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC"));
+  let b2cStatusVisible = mnt.iBizRakyatStatus === "C" || (startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC"));
+  let b2bnb2cStatusVisible = mnt.iRakyatStatus === "C" || mnt.iBizRakyatStatus === "C" || (startDate <= today && ((mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC") && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC")));
+
+  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C"))  b2bStatusVisible = true;
+  if((mnt.approvalStatus !== "Pending" && mnt.iBizRakyatStatus === "C"))  b2cStatusVisible = true;
+  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C" && mnt.iBizRakyatStatus === "C")) b2bnb2cStatusVisible = true;
+  //console.log(mnt);
+
+  return (
+    <div className="flex flex-col gap-1">
+      {mnt.iRakyatYN && mnt.iBizRakyatYN ? (
+        <div className="flex justify-center items-center">
+          {
+            b2bnb2cStatusVisible &&
+            (
+            <span
+              className={`${
+                mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus == "C"
+                  ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
+                  : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+              }`}
+            >
+              {
+                startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC" || mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC") ? (
+                  <>Active</>
+                ) : (mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus === "C") ? (
+                  <>Completed</>
+                ) : <></>
+              }
+            </span>
+          )}
+        </div>
+      ) : (
+        mnt.iRakyatYN ? (
+          <div className="flex justify-center items-center">
+            {
+              b2bStatusVisible &&
+              (
+              <span
+                className={`${
+                  mnt.iRakyatStatus == "C"
+                    ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
+                    : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                }`}
+              >
+                {
+                  startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC") ? (
+                    <>Active</>
+                  ) : (mnt.iRakyatStatus == "C") ? (
+                    <>Completed</>
+                  ) : <></>
+                }
+              </span>
+            )}
+          </div>
+        ) : (
+          mnt.iBizRakyatYN ? (
+            <div className="flex justify-center items-center">
+              {
+                b2cStatusVisible &&
+                (
+                <span
+                  className={`${
+                    mnt.iBizRakyatStatus == "C"
+                      ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
+                      : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                  }`}
+                >
+                  {
+                    startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC") ? (
+                      <>Active</>
+                    ) : (mnt.iBizRakyatStatus == "C") ? (
+                      <>Completed</>
+                    ) : <></>
+                  }
+                </span>
+              )}
+            </div>
+          ) : (
+            <></>
+          )
+        )
+      )}
+    </div>
+  );
+};
+
 const checkboxes = (mnt: SysMaintenance) => <CheckBox mnt={mnt} />;
 const channel = (mnt: SysMaintenance) => <Channel mnt={mnt} />;
+const status = (mnt: SysMaintenance) => <Status mnt={mnt} />;
 const actions = (mnt: SysMaintenance) => <Actions mnt={mnt} />;
 
 export default function SystemMaintenanceTable({
@@ -321,7 +364,7 @@ export default function SystemMaintenanceTable({
       data={data}
       hide={hide}
       onClick={onClick}
-      columns={maintenanceListingColumns(checkboxes, channel, actions)}
+      columns={maintenanceListingColumns(checkboxes, channel, status, actions)}
       route="/portal/system-maintenance/request"
     />
   );

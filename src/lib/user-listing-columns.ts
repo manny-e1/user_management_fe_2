@@ -24,13 +24,13 @@ export const userListingColums = (component: (action: Action) => JSX.Element) =>
       cell: (props) => props.cell.getValue(),
     },
     {
-      header: 'Staff Id',
+      header: 'Staff ID',
       accessorFn: (row) => row.staffId,
       accessorKey: 'staffID',
       cell: (props) => props.cell.getValue(),
     },
     {
-      header: 'User group',
+      header: 'User Group',
       accessorFn: (row) => row.userGroup,
       accessorKey: 'userGroup',
       cell: (props) => props.cell.getValue(),

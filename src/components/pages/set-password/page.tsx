@@ -50,7 +50,7 @@ export default function SetPasswordPage() {
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
     if (password !== confirmPassword) {
-      setErr("passwords don't match");
+      setErr("Password not matching");
       return;
     }
 
@@ -121,7 +121,8 @@ export default function SetPasswordPage() {
               id="scfmpwd"
               password={confirmPassword}
               setPassword={setConfirmPassword}
-              placeholder="Confirm password"
+              placeholder="Confirm new password"
+              comparePassword={password}
             />
 
             {err?.includes('match') && <p className="text-red-500">{err}</p>}
@@ -134,7 +135,7 @@ export default function SetPasswordPage() {
               className="px-4 py-2.5 disabled:cursor-not-allowed disabled:opacity-50 rounded font-normal text-lg text-white bg-blue-500 hover:bg-blue-600 mr-2"
               disabled={resetPwdMut.isLoading}
             >
-              Submit
+              Update
             </button>
           </div>
         </form>

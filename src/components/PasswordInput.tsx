@@ -1,6 +1,7 @@
 'use client';
 import { SetStateAction } from 'jotai';
 import { ChangeEvent, Dispatch, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function PasswordInput({
   id,
@@ -9,6 +10,7 @@ export default function PasswordInput({
   portal = false,
   login = false,
   placeholder,
+  comparePassword
 }: {
   id: string;
   password: string;
@@ -16,22 +18,55 @@ export default function PasswordInput({
   portal?: boolean;
   login?: boolean;
   placeholder?: string;
+  comparePassword?: string;
 }) {
   const [valid, setValid] = useState(true);
+  const pathname = usePathname();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     setPassword(() => inputValue);
     setValid(() => event.target.checkValidity());
-    const regex =
-      /^(?=.*[a-z])(?=.*[=A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$/;
-    if (!regex.test(inputValue)) {
-      event.target.setCustomValidity(
-        'Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character and at least 8 or more characters.'
-      );
-    } else {
+    event.target.setCustomValidity('');
+
+    const strRegex = new RegExp(/^(?=.*[A-Za-z0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/i);
+
+    if (inputValue == ""){
+      event.target.setCustomValidity('Invalid input.\n' + event.target.validationMessage);
+    }
+    else if (inputValue.length < 8){
+      event.target.setCustomValidity('Password must have at least 8 characters.\nNew Password is less than minimum length.\n' + event.target.validationMessage);
+    }
+    else if (!strRegex.test(inputValue)) {
+
+      if (pathname.includes('/change-password') || pathname.includes('/set-password')){
+        event.target.setCustomValidity(
+          'New Password need to be alphanumeric and either one of the special character allowed: !@#$%^&*\nPlease match the requested format'
+        );
+      }
+      else {
+        event.target.setCustomValidity(
+          'Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character and at least 8 or more characters.'
+        );
+      }
+
+    } 
+    else if(comparePassword !== undefined){
+      if (pathname.includes('/change-password') || pathname.includes('/set-password')){
+        if (comparePassword !== null){
+          if (event.currentTarget.value !== comparePassword){
+            event.currentTarget.setCustomValidity('Confirm Password not matching');
+          }
+        }
+      }
+    }
+    else {
       event.target.setCustomValidity('');
     }
+  };
+
+  const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
+    event.target.setCustomValidity('');
   };
 
   return (
@@ -39,6 +74,7 @@ export default function PasswordInput({
       type="password"
       id={id}
       value={password}
+      onInput={handleInput}
       onChange={handleChange}
       pattern=".{8,}"
       placeholder={placeholder}
