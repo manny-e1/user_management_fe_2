@@ -30,9 +30,11 @@ export function usePermission() {
           case 'admin 2':
             redirect('/portal/user-groups');
           case 'manager 1':
+            redirect('/portal/dashboard');
           case 'normal user 1':
             redirect('/portal/transaction-limit');
           case 'manager 2':
+            redirect('/portal/dashboard');
           case 'normal user 2':
             redirect('/portal/system-maintenance');
           default:
