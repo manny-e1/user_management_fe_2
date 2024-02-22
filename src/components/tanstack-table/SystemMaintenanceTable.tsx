@@ -18,7 +18,7 @@ import { SortingState } from "@tanstack/react-table";
 const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
   const { id } = mnt;
   const user = usePermission();
-  let channelStatus = (mnt.iRakyatStatus === "CC" ? "A" : mnt.iRakyatStatus) + (mnt.iBizRakyatStatus === "CC" ? "A" : mnt.iBizRakyatStatus);
+  let channelStatus = mnt.iRakyatStatus + mnt.iBizRakyatStatus;
 
   const queryClient = useQueryClient();
 
@@ -257,9 +257,9 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
   const today = new Date().toISOString();
   const startDate = new Date(mnt.startDate).toISOString();
 
-  let b2bStatusVisible = mnt.iRakyatStatus === "C" || (startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC"));
-  let b2cStatusVisible = mnt.iBizRakyatStatus === "C" || (startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC"));
-  let b2bnb2cStatusVisible = mnt.iRakyatStatus === "C" || mnt.iBizRakyatStatus === "C" || (startDate <= today && ((mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC") && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC")));
+  let b2bStatusVisible = mnt.iRakyatStatus === "C" || (startDate <= today && (mnt.iRakyatStatus === "A"));
+  let b2cStatusVisible = mnt.iBizRakyatStatus === "C" || (startDate <= today && (mnt.iBizRakyatStatus === "A"));
+  let b2bnb2cStatusVisible = mnt.iRakyatStatus === "C" || mnt.iBizRakyatStatus === "C" || (startDate <= today && ((mnt.iRakyatStatus === "A") && (mnt.iBizRakyatStatus === "A")));
 
   if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C"))  b2bStatusVisible = true;
   if((mnt.approvalStatus !== "Pending" && mnt.iBizRakyatStatus === "C"))  b2cStatusVisible = true;
@@ -281,7 +281,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
               }`}
             >
               {
-                startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC" || mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC") ? (
+                startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iBizRakyatStatus === "A") ? (
                   <>Active</>
                 ) : (mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus === "C") ? (
                   <>Completed</>
@@ -304,7 +304,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
                 }`}
               >
                 {
-                  startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iRakyatStatus === "CC") ? (
+                  startDate <= today && (mnt.iRakyatStatus === "A") ? (
                     <>Active</>
                   ) : (mnt.iRakyatStatus == "C") ? (
                     <>Completed</>
@@ -327,7 +327,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
                   }`}
                 >
                   {
-                    startDate <= today && (mnt.iBizRakyatStatus === "A" || mnt.iBizRakyatStatus === "CC") ? (
+                    startDate <= today && (mnt.iBizRakyatStatus === "A") ? (
                       <>Active</>
                     ) : (mnt.iBizRakyatStatus == "C") ? (
                       <>Completed</>

@@ -170,14 +170,14 @@ export default function SystemMaintenancePage() {
       
       if (row.iRakyatYN) {
         channel += "i-Rakyat";
-        if (row.iRakyatStatus == "A" || row.iRakyatStatus == "CC") channel += "(Active)";
+        if (row.iRakyatStatus == "A") channel += "(Active)";
         else if(row.iRakyatStatus == "C") channel += "(Complete)";
       }
 
       if(row.iBizRakyatYN) {
         if (row.iRakyatYN)  channel += ", ";
         channel += "i-BizRakyat";
-        if (row.iBizRakyatStatus == "A" || row.iBizRakyatStatus == "CC") channel += "(Active)";
+        if (row.iBizRakyatStatus == "A") channel += "(Active)";
         else if(row.iBizRakyatStatus == "C") channel += "(Complete)";
       }
 
