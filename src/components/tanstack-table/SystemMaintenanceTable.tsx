@@ -153,6 +153,7 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
               <div className="flex flex-col gap-1">
                 {mnt.iRakyatYN &&
                   mnt.iRakyatStatus == "A" &&
+                  !mnt.iRakyatCN &&
                   (mnt.approvalStatus == "Approved" ||
                     mnt.approvalStatus === "Rejected" ||
                     (mnt.approvalStatus == "Pending" &&
@@ -175,6 +176,7 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
                 )} */}
                 {mnt.iBizRakyatYN &&
                   mnt.iBizRakyatStatus == "A" &&
+                  !mnt.iBizRakyatCN &&
                   (mnt.approvalStatus == "Approved" ||
                     mnt.approvalStatus === "Rejected" ||
                     (mnt.approvalStatus == "Pending" &&
