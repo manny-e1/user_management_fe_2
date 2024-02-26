@@ -75,8 +75,6 @@ export default function RequestMaintenancePage() {
     ]);
   };
 
-  console.log({ rows });
-
   const deleteRows = (index: number) => {
     const tmpRows = rows.slice();
     tmpRows.splice(index, 1);

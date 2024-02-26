@@ -3,6 +3,7 @@ import Table from '@/components/tanstack-table/Table';
 import { groupListingColums } from '@/lib/group-listing-columns';
 import { UserGroup, deleteUserGroup } from '@/service/user-group';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SortingState } from '@tanstack/react-table';
 import Link from 'next/link';
 import { LuEdit, LuTrash2 } from 'react-icons/lu';
 import Swal from 'sweetalert2';
@@ -59,7 +60,7 @@ function Actions({ id }: { id: string }) {
         onClick={handleDeleteUserGroup}
         className="text-red-500 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 "
         aria-disabled={deleteUserGroupMut.isLoading}
-      />
+      /> 
     </div>
   );
 }
@@ -67,12 +68,19 @@ function Actions({ id }: { id: string }) {
 function actions(id: string) {
   return <Actions id={id} />;
 }
-export default function GroupTable({ data }: { data: UserGroup[] }) {
+export default function GroupTable({
+  data,
+  onClick
+}: {
+  data: UserGroup[],
+  onClick: (sorting?: SortingState) => void
+}) {
   return (
     <Table
       data={data}
       columns={groupListingColums(actions)}
       route="/portal/user-groups/create"
+      onClick={onClick}
     />
   );
 }

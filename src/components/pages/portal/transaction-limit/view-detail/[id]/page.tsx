@@ -125,7 +125,6 @@ export default function ViewTransactionPage() {
           });
         } else {
           Swal.fire('Error', 'You must input the reason.', 'error')
-            .then(() => handleApprove())
             .catch((error) => console.log(error));
         }
       }

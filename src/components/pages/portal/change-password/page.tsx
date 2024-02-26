@@ -22,10 +22,16 @@ export default function ChangePasswordPortalPage() {
     mutationFn: resetPassword,
     onSuccess: (data) => {
       if ('error' in data) {
+        // Swal.fire({
+        //   title: 'Error!',
+        //   text: data.error,
+        //   icon: 'error',
+        // });
         Swal.fire({
-          title: 'Error!',
-          text: data.error,
-          icon: 'error',
+          title: 'Info',
+          html: `<div class="text-sm-start">` + data.error + `</div>`,
+          icon: 'info',
+          showCloseButton: true,
         });
         return;
       }
@@ -60,7 +66,7 @@ export default function ChangePasswordPortalPage() {
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
     if (newPwd !== confirmNewPwd) {
-      setErr("the passwords don't match");
+      setErr("Password not matching");
       return;
     }
     setErr(null);
@@ -123,6 +129,7 @@ export default function ChangePasswordPortalPage() {
                 setPassword={setConfirmNewPwd}
                 password={confirmNewPwd}
                 placeholder="Confirm new password"
+                comparePassword={newPwd}
               />
               {err?.includes('match') && <p className="text-red-500">{err}</p>}
               {/* <div id="CheckPasswordMatch" className="col-sm-8 mt-[1px]"></div> */}

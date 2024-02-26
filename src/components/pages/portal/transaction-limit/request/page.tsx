@@ -83,6 +83,7 @@ export default function RequestTransactionPage() {
   }, [lastValuesQry.data]);
 
   const handleSubmit = (evt: FormEvent) => {
+    evt.preventDefault();
     if (
       !Number(removeComma(nCib)) ||
       !Number(removeComma(nCmb)) ||
@@ -91,7 +92,7 @@ export default function RequestTransactionPage() {
     ) {
       Swal.fire({
         title: 'Error!',
-        text: 'The limit value cannot be empty or 0.00',
+        text: 'The limit value cannot be 0.00',
         icon: 'error',
       });
       return;
@@ -226,13 +227,6 @@ export default function RequestTransactionPage() {
             </Link>
             <button
               type="submit"
-              disabled={
-                !Number(removeComma(nCib)) ||
-                !Number(removeComma(nCmb)) ||
-                !Number(removeComma(nRib)) ||
-                !Number(removeComma(nRmb)) ||
-                requestTxnMut.isLoading
-              }
               id="btnSaveNewPassword"
               className="disabled:cursor-not-allowed disabled:opacity-50 mt-3 text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-[0.35rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
             >

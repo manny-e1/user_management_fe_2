@@ -10,6 +10,8 @@ export type SysMaintenance = {
   endDate: Date | string;
   iRakyatYN: boolean;
   iBizRakyatYN: boolean;
+  iRakyatCN?: boolean;
+  iBizRakyatCN?: boolean;
   iRakyatStatus: string;
   iBizRakyatStatus: string;
   submissionStatus: string;

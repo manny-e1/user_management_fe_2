@@ -22,7 +22,11 @@ export default function ViewMaintenancePage() {
   const user = usePermission();
   const params = useParams();
   const router = useRouter();
+  const [isStartDate, setIsStartDate] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const [b2bVisible, setB2BVisible] = useState<boolean>(false);
+  const [b2cVisible, setB2CVisible] = useState<boolean>(false);
+  const [b2bnb2cVisible, setB2BnB2CVisible] = useState<boolean>(false);
   const [mntLog, setMntLog] = useState<SysMaintenance>();
 
   usePwdValidityQuery(user?.id);
@@ -85,6 +89,17 @@ export default function ViewMaintenancePage() {
     if (getMntQry.data) {
       if ('mntLog' in getMntQry.data) {
         setMntLog(getMntQry.data.mntLog);
+
+        const today = new Date().toISOString();
+        const startDate = new Date(getMntQry.data.mntLog.startDate).toISOString();
+        if(startDate <= today) setIsStartDate(true);
+
+        setB2BVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC")));
+        setB2CVisible(getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC")));
+        setB2BnB2CVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && ((getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC") && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC"))));
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C")) setB2BVisible(true);
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2CVisible(true);
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2BnB2CVisible(true);
       }
     }
   }, [getMntQry.data]);
@@ -105,12 +120,18 @@ export default function ViewMaintenancePage() {
       showCancelButton: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const reason = result.value as string;
-        rejectMut.mutate({
-          ids: [id],
-          email: user?.email ?? '',
-          msg: reason,
-        });
+        if (result.value) {
+          console.log({ value: result.value });
+          const reason = result.value as string;
+          rejectMut.mutate({
+            ids: [id],
+            email: user?.email ?? '',
+            msg: reason,
+          });
+        } else {
+          Swal.fire('Error', 'You must input the reason.', 'error')
+            .catch((error) => console.log(error));
+        }
       }
     });
   };
@@ -198,7 +219,7 @@ export default function ViewMaintenancePage() {
               <td className="font-bold px-1">To Date</td>
               <td className="font-bold px-1">To Time</td>
               <td className="font-bold px-1" colSpan={2}></td>
-              <td className="font-bold px-1">Maintenance Status</td>
+              <td className="font-bold px-1 text-center">Maintenance Status</td>
             </tr>
             <tr>
               <td className="pe-1">
@@ -310,68 +331,66 @@ export default function ViewMaintenancePage() {
               <td className="ps-2">
                 {mntLog?.iRakyatYN && mntLog?.iBizRakyatYN ? (
                   <div className="flex justify-center items-center">
-                    {((mntLog?.iRakyatStatus != '' || mntLog?.iBizRakyatStatus != '' && 
-                      mntLog?.approvalStatus != 'Rejected' &&
-                      mntLog?.submissionStatus !== 'Delete') ||
-                      (mntLog?.submissionStatus == 'Marked' &&
-                        mntLog?.approvalStatus !== 'Pending')) && (
+                    { 
+                      b2bnb2cVisible && 
+                      (
                       <span
                         className={`${
                           mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C'
-                            ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                            : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                            ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                            : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
                         }`}
                       >
-                        {mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' || mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC' ? (
+                        { isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' || mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
                             <>Active</>
-                          ) : (
+                          ) : (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') ? (
                             <>Completed</>
-                        )}
+                          ) : <>Check1</>    
+                        }
                       </span>
                     )}
                   </div>
                 ) : 
                   mntLog?.iRakyatYN ? (
                     <div className="flex justify-center items-center">
-                      {((mntLog?.iRakyatStatus != '' &&
-                        mntLog?.approvalStatus != 'Rejected' &&
-                        mntLog?.submissionStatus !== 'Delete') ||
-                        (mntLog?.submissionStatus == 'Marked' &&
-                          mntLog?.approvalStatus !== 'Pending')) && (
+                      {
+                        b2bVisible && 
+                        (
                         <span
                           className={`${
                             mntLog?.iRakyatStatus == 'C'
-                              ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                              : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
                           }`}
                         >
-                          {mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' ? (
-                            <>Active</>
-                          ) : (
-                            <>Completed</>
-                          )}
+                          { isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC') ? (
+                              <>Active</>
+                            ) : (mntLog?.iRakyatStatus == 'C') ? (
+                              <>Completed</>
+                            ) : <>Check2</>
+                          }
                         </span>
                       )}
                     </div>
                   ) : 
                   mntLog?.iBizRakyatYN ? (
                     <div className="flex justify-center items-center">
-                      {((mntLog?.iBizRakyatStatus != '' &&
-                        mntLog?.approvalStatus != 'Rejected' &&
-                        mntLog?.submissionStatus !== 'Delete') ||
-                        mntLog?.submissionStatus == 'Marked') && (
+                      {
+                        b2cVisible && (
                         <span
                           className={`${
                             mntLog?.iBizRakyatStatus == 'C'
-                              ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                              : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
                           }`}
                         >
-                          {mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC' ? (
-                            <>Active</>
-                          ) : (
-                            <>Completed</>
-                          )}
+                          { 
+                            isStartDate && (mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
+                              <>Active</>
+                            ) : (mntLog?.iBizRakyatStatus == 'C') ? (
+                              <>Completed</>
+                            ) : <>Check3</>
+                          }
                         </span>
                       )}
                     </div>
@@ -413,7 +432,7 @@ export default function ViewMaintenancePage() {
                   disabled={approveMut.isLoading || rejectMut.isLoading}
                   type="submit"
                   id="btnApproved"
-                  className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.75rem] py-[0.25rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
+                  className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.75rem] py-[0.25rem] focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                   onClick={handleApproveClick}
                 >
                   Approve

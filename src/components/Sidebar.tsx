@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs';
 import { GoPeople } from 'react-icons/go';
 import { HiOutlineLockClosed } from 'react-icons/hi';
-import { FiSettings, FiHome } from 'react-icons/fi';
+import { FiSettings, FiHome } from 'react-icons/fi'
 import { VscSettings } from 'react-icons/vsc';
 
 export default function Sidebar() {

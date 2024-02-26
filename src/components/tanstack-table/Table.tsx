@@ -71,6 +71,7 @@ const mntStatusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     row.getValue('channelStatus'),
     maintenanceStatus
   );
+  //console.log(row);
 
   const period = row.getValue('period') as string;
   const startDate = new Date(period.split('@')[0]);
@@ -109,7 +110,7 @@ export default function Table<T extends { id: string }>({
   route: string;
   hide?: boolean;
   hideUtility?: boolean;
-  onClick?: () => void;
+  onClick?: (sorting: SortingState) => void;
 }) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -199,13 +200,13 @@ export default function Table<T extends { id: string }>({
             <>
               {!isUserTable ? (
                 !isUserGroupTable ? (
-                  <button
-                    id="btnExport"
-                    onClick={onClick}
-                    className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
-                  >
-                    Export
-                  </button>
+                <button
+                  id="btnExport"
+                  onClick={() => onClick && onClick(sorting)}
+                  className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
+                >
+                  Export
+                </button>
                 ) : (
                   <></>
                 )
@@ -219,7 +220,7 @@ export default function Table<T extends { id: string }>({
                   className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                 >
                   { isTxnTable ? '+ New Request' : 
-                    isMntTable ? '+ Create Schedule': '+ Add'}
+                    isMntTable ? '+ Create Schedule': '+ Add' }
                 </button>
               ) : (
                 <></>

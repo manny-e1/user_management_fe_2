@@ -34,6 +34,10 @@ export default function EditMaintenancePage() {
     iRakyat: false,
     iBizRakyat: false,
   });
+  const [isStartDate, setIsStartDate] = useState<boolean>(false);
+  const [b2bVisible, setB2BVisible] = useState<boolean>(false);
+  const [b2cVisible, setB2CVisible] = useState<boolean>(false);
+  const [b2bnb2cVisible, setB2BnB2CVisible] = useState<boolean>(false);
 
   const id = params?.id;
 
@@ -75,6 +79,66 @@ export default function EditMaintenancePage() {
     },
   });
 
+  const completeMut = useMutation({
+    mutationFn: completeMntLogs,
+    onSuccess: async (data) => {
+      if ('error' in data) {
+        await Swal.fire({
+          title: 'Error!',
+          text: data.error,
+          icon: 'error',
+        });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ['system-maintenance'] });
+      await Swal.fire({
+        title: 'Success!',
+        text: 'You’ve successfully sent the request for approval.',
+        icon: 'success',
+      });
+    },
+  });
+
+  const handleCompleteRakyat = async () => {
+    await Swal.fire({
+      title: 'Confirmation',
+      text: 'Are you sure you want to mark as completed?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        completeMut.mutate({
+          id: id,
+          channel: 'rakyat',
+        });
+      }
+    });
+  };
+
+  const handleCompleteBizRakyat = async () => {
+    await Swal.fire({
+      title: 'Confirmation',
+      text: 'Are you sure you want to mark as completed?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        completeMut.mutate({
+          id: id,
+          channel: 'bizRakyat',
+        });
+      }
+    });
+  };
+
   useEffect(() => {
     if (getMntQry.data) {
       if ('mntLog' in getMntQry.data) {
@@ -90,6 +154,16 @@ export default function EditMaintenancePage() {
           minDate: '',
           minTime: '',
         });
+
+        const today = new Date().toISOString();
+        const startDate = new Date(getMntQry.data.mntLog.startDate).toISOString();
+        if(startDate <= today) setIsStartDate(true);
+        setB2BVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC")));
+        setB2CVisible(getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC")));
+        setB2BnB2CVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && ((getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC") && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC"))));
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C")) setB2BVisible(true);
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2CVisible(true);
+        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2BnB2CVisible(true);
       }
     }
   }, [getMntQry.data]);
@@ -189,66 +263,6 @@ export default function EditMaintenancePage() {
     });
   };
 
-  const completeMut = useMutation({
-    mutationFn: completeMntLogs,
-    onSuccess: async (data) => {
-      if ('error' in data) {
-        await Swal.fire({
-          title: 'Error!',
-          text: data.error,
-          icon: 'error',
-        });
-        return;
-      }
-      queryClient.invalidateQueries({ queryKey: ['system-maintenance'] });
-      await Swal.fire({
-        title: 'Success!',
-        text: 'You’ve successfully sent the request for approval.',
-        icon: 'success',
-      });
-    },
-  });
-
-  const handleCompleteRakyat = async () => {
-    await Swal.fire({
-      title: 'Confirmation',
-      text: 'Are you sure you want to mark as completed?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'OK',
-      cancelButtonText: 'Cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        completeMut.mutate({
-          id: id,
-          channel: 'rakyat',
-        });
-      }
-    });
-  };
-
-  const handleCompleteBizRakyat = async () => {
-    await Swal.fire({
-      title: 'Confirmation',
-      text: 'Are you sure you want to mark as completed?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'OK',
-      cancelButtonText: 'Cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        completeMut.mutate({
-          id: id,
-          channel: 'bizRakyat',
-        });
-      }
-    });
-  };
-
   const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'System Maintenance' }];
 
   return (
@@ -338,7 +352,7 @@ export default function EditMaintenancePage() {
                 <td className="font-bold px-1">To Date</td>
                 <td className="font-bold px-1">To Time</td>
                 <td className="font-bold px-1" colSpan={2}></td>
-                <td className="font-bold px-1">Maintenance Status</td>
+                <td className="font-bold px-1 text-center">Maintenance Status</td>
               </tr>
               <tr>
                 <td className="pe-1">
@@ -388,27 +402,27 @@ export default function EditMaintenancePage() {
                   />
                   &nbsp;iRakyat
                   {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
-                  <>
-                    {user?.role === 'normal user 2' && (
-                      <>
-                        {mntLog?.iRakyatYN &&
-                          mntLog?.iRakyatStatus == 'A' &&
-                          (mntLog?.approvalStatus == 'Approved' ||
-                            mntLog?.approvalStatus === 'Rejected' ||
-                            (mntLog?.approvalStatus == 'Pending' &&
-                              mntLog?.submissionStatus == 'Marked')) && (
-                            <div 
-                              className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer" 
-                              style={{float:'right', marginTop:'0.2rem'}}
-                              onClick={handleCompleteRakyat}
-                            >
-                              <FiCheckCircle className="me-1" />
-                            </div>
-                        )}
-                      </>
+                    <>
+                      {user?.role === 'normal user 2' && (
+                        <>
+                          {mntLog?.iRakyatYN &&
+                            mntLog?.iRakyatStatus == 'A' &&
+                            (mntLog?.approvalStatus == 'Approved' ||
+                              mntLog?.approvalStatus === 'Rejected' ||
+                              (mntLog?.approvalStatus == 'Pending' &&
+                                mntLog?.submissionStatus == 'Marked')) && (
+                              <div 
+                                className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer" 
+                                style={{float:'right', marginTop:'0.2rem'}}
+                                onClick={handleCompleteRakyat}
+                              >
+                                <FiCheckCircle className="me-1" />
+                              </div>
+                          )}
+                        </>
                       )}
-                  </>
-                )}
+                    </>
+                  )}
                 </td>
                 <td className="ps-3" style={{paddingInlineEnd:'2.75rem'}}>
                   <input
@@ -419,93 +433,92 @@ export default function EditMaintenancePage() {
                   />
                   &nbsp;iBizRakyat
                   {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
-                  <>
-                    {user?.role === 'normal user 2' && (
-                      <>
-                        {mntLog?.iBizRakyatYN &&
-                          mntLog?.iBizRakyatStatus == 'A' &&
-                          (mntLog?.approvalStatus == 'Approved' ||
-                            mntLog?.approvalStatus === 'Rejected' ||
-                            (mntLog?.approvalStatus == 'Pending' &&
-                              mntLog?.submissionStatus == 'Marked')) && (
-                            <div 
-                              className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer" 
-                              style={{float:'right', marginTop:'0.2rem'}}
-                              onClick={handleCompleteBizRakyat}
-                            >
-                              <FiCheckCircle className="me-1" />
-                            </div>
+                    <>
+                      {user?.role === 'normal user 2' && (
+                        <>
+                          {mntLog?.iBizRakyatYN &&
+                            mntLog?.iBizRakyatStatus == 'A' &&
+                            (mntLog?.approvalStatus == 'Approved' ||
+                              mntLog?.approvalStatus === 'Rejected' ||
+                              (mntLog?.approvalStatus == 'Pending' &&
+                                mntLog?.submissionStatus == 'Marked')) && (
+                              <div 
+                                className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer" 
+                                style={{float:'right', marginTop:'0.2rem'}}
+                                onClick={handleCompleteBizRakyat}
+                              >
+                                <FiCheckCircle className="me-1" />
+                              </div>
+                          )}
+                        </>
                         )}
-                      </>
-                      )}
-                  </>
-                )}
+                    </>
+                  )}
                 </td>
                 <td className="ps-2">
                   {mntLog?.iRakyatYN && mntLog?.iBizRakyatYN ? (
                     <div className="flex justify-center items-center">
-                      {((mntLog?.iRakyatStatus != '' || mntLog?.iBizRakyatStatus != '' && 
-                        mntLog?.approvalStatus != 'Rejected' &&
-                        mntLog?.submissionStatus !== 'Delete') ||
-                        (mntLog?.submissionStatus == 'Marked' &&
-                          mntLog?.approvalStatus !== 'Pending')) && (
+                      { 
+                        b2bnb2cVisible && 
+                        (
                         <span
                           className={`${
                             mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C'
-                              ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                              : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
                           }`}
                         >
-                          {mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' || mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC' ? (
+                          { isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' || mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
                               <>Active</>
-                            ) : (
+                            ) : (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') ? (
                               <>Completed</>
-                          )}
+                            ) : <></>    
+                          }
                         </span>
                       )}
                     </div>
                   ) : 
                     mntLog?.iRakyatYN ? (
                       <div className="flex justify-center items-center">
-                        {((mntLog?.iRakyatStatus != '' &&
-                          mntLog?.approvalStatus != 'Rejected' &&
-                          mntLog?.submissionStatus !== 'Delete') ||
-                          (mntLog?.submissionStatus == 'Marked' &&
-                            mntLog?.approvalStatus !== 'Pending')) && (
+                        {
+                          b2bVisible && 
+                          (
                           <span
                             className={`${
                               mntLog?.iRakyatStatus == 'C'
-                                ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                                : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                                ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                                : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
                             }`}
                           >
-                            {mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' ? (
-                              <>Active</>
-                            ) : (
-                              <>Completed</>
-                            )}
+                            { 
+                              isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC') ? (
+                                <>Active</>
+                              ) : (mntLog?.iRakyatStatus == 'C') ? (
+                                <>Completed</>
+                              ) : <></>
+                            }
                           </span>
                         )}
                       </div>
                     ) : 
                     mntLog?.iBizRakyatYN ? (
                       <div className="flex justify-center items-center">
-                        {((mntLog?.iBizRakyatStatus != '' &&
-                          mntLog?.approvalStatus != 'Rejected' &&
-                          mntLog?.submissionStatus !== 'Delete') ||
-                          mntLog?.submissionStatus == 'Marked') && (
+                        {
+                          b2cVisible && (
                           <span
                             className={`${
                               mntLog?.iBizRakyatStatus == 'C'
-                                ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                                : 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                                ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                                : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
                             }`}
                           >
-                            {mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC' ? (
-                              <>Active</>
-                            ) : (
-                              <>Completed</>
-                            )}
+                            { 
+                              isStartDate && (mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
+                                <>Active</>
+                              ) : (mntLog?.iBizRakyatStatus == 'C') ? (
+                                <>Completed</>
+                              ) : <></>
+                            }
                           </span>
                         )}
                       </div>

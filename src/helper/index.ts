@@ -1,6 +1,4 @@
-import cookies from 'js-cookie';
-import secureLocalStorage from 'react-secure-storage';
-import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
 
 export function capitalizeEveryWord(str?: string) {
   return str?.replace(/\b\w/g, (match) => match.toUpperCase());
@@ -44,7 +42,10 @@ export function formatDate(date?: Date) {
 }
 
 export function getHeader(type: 'AUTHPOST' | 'AUTHGET' | 'NORMALPOST') {
-  const token = sessionStorage.getItem('token') || cookies.get('token');
+  const token =
+    Cookies.get('rememberMe') === 'no'
+      ? sessionStorage.getItem('token')
+      : Cookies.get('token');
   const headers: { Authorization?: string; 'Content-Type'?: string } = {};
   if (type === 'AUTHPOST') {
     headers['Content-Type'] = 'application/json';

@@ -13,11 +13,12 @@ import Swal from "sweetalert2";
 import { API_URL } from "@/lib/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { SortingState } from "@tanstack/react-table";
 
 const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
   const { id } = mnt;
   const user = usePermission();
-  const channelStatus = mnt.iRakyatStatus + mnt.iBizRakyatStatus;
+  let channelStatus = mnt.iRakyatStatus + mnt.iBizRakyatStatus;
 
   const queryClient = useQueryClient();
 
@@ -121,8 +122,8 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
         View
       </Link>
       {mnt.submissionStatus !== "Delete" &&
-        mnt.iBizRakyatStatus !== "C" &&
-        mnt.iRakyatStatus !== "C" && (
+        (mnt.iBizRakyatStatus !== "C" ||
+        mnt.iRakyatStatus !== "C") && (
           <>
             {user?.role == "normal user 2" &&
               (channelStatus.indexOf("C") == -1 ||
@@ -138,7 +139,8 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
                 </>
               )}
 
-            {user?.role === "normal user 2" &&
+            {user?.role === "normal user 2" && 
+              ((mnt.iRakyatYN && mnt.iRakyatStatus != "A") || (mnt.iBizRakyatYN && mnt.iBizRakyatStatus != "A")) && 
               (mnt.submissionStatus === "New" || mnt.submissionStatus === "Edited") &&
               mnt.approvalStatus === "Pending" && (
                 <span
@@ -152,6 +154,7 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
               <div className="flex flex-col gap-1">
                 {mnt.iRakyatYN &&
                   mnt.iRakyatStatus == "A" &&
+                  !mnt.iRakyatCN &&
                   (mnt.approvalStatus == "Approved" ||
                     mnt.approvalStatus === "Rejected" ||
                     (mnt.approvalStatus == "Pending" &&
@@ -174,6 +177,7 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
                 )} */}
                 {mnt.iBizRakyatYN &&
                   mnt.iBizRakyatStatus == "A" &&
+                  !mnt.iBizRakyatCN &&
                   (mnt.approvalStatus == "Approved" ||
                     mnt.approvalStatus === "Rejected" ||
                     (mnt.approvalStatus == "Pending" &&
@@ -203,9 +207,15 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
 };
 
 const CheckBox = ({ mnt }: { mnt: SysMaintenance }) => {
+  let visibility = mnt.iBizRakyatStatus !== "C" && mnt.iRakyatStatus !== "C";
+
+  if ((mnt.iBizRakyatStatus === "C" || mnt.iRakyatStatus === "C") && mnt.approvalStatus === "Pending")
+    visibility = true;
+
   return (
     <div className="p-1">
-      {mnt.iBizRakyatStatus !== "C" && mnt.iRakyatStatus !== "C" && (
+      {
+        visibility && (
         <>
           {mnt.approvalStatus !== "Rejected" &&
             mnt.approvalStatus !== "Approved" && (
@@ -222,8 +232,6 @@ const CheckBox = ({ mnt }: { mnt: SysMaintenance }) => {
 };
 
 const Channel = ({ mnt }: { mnt: SysMaintenance }) => {
-  console.log(mnt.approvalStatus, mnt.submittedAt)
-
   return (
     <div className="flex flex-col gap-1">
       {mnt.iRakyatYN ? (
@@ -252,77 +260,90 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
   const today = new Date().toISOString();
   const startDate = new Date(mnt.startDate).toISOString();
 
+  let b2bStatusVisible = mnt.iRakyatStatus === "C" || (startDate <= today && (mnt.iRakyatStatus === "A"));
+  let b2cStatusVisible = mnt.iBizRakyatStatus === "C" || (startDate <= today && (mnt.iBizRakyatStatus === "A"));
+  let b2bnb2cStatusVisible = mnt.iRakyatStatus === "C" || mnt.iBizRakyatStatus === "C" || (startDate <= today && ((mnt.iRakyatStatus === "A") && (mnt.iBizRakyatStatus === "A")));
+
+  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C"))  b2bStatusVisible = true;
+  if((mnt.approvalStatus !== "Pending" && mnt.iBizRakyatStatus === "C"))  b2cStatusVisible = true;
+  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C" && mnt.iBizRakyatStatus === "C")) b2bnb2cStatusVisible = true;
+  //console.log(mnt);
+
   return (
     <div className="flex flex-col gap-1">
       {mnt.iRakyatYN && mnt.iBizRakyatYN ? (
         <div className="flex justify-center items-center">
-          {startDate <= today &&
-            mnt.iRakyatStatus !== "" || mnt.iBizRakyatStatus !== "" &&
-            mnt.approvalStatus !== "Pending" &&
+          {
+            b2bnb2cStatusVisible &&
             (
             <span
               className={`${
-              mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus == "C"
-                ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
-                : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus == "C"
+                  ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
+                  : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
               }`}
             >
-              {mnt.iRakyatStatus == "A" || mnt.iRakyatStatus === "CC" || mnt.iBizRakyatStatus == "A" || mnt.iBizRakyatStatus === "CC" ? (
-              <>Active</>
-              ) : (
-              <>Complete</>
-              )}
+              {
+                startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iBizRakyatStatus === "A") ? (
+                  <>Active</>
+                ) : (mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus === "C") ? (
+                  <>Completed</>
+                ) : <></>
+              }
             </span>
-            )}
+          )}
         </div>
-      ) : 
+      ) : (
         mnt.iRakyatYN ? (
           <div className="flex justify-center items-center">
-            {startDate <= today &&
-              mnt.iRakyatStatus !== "" &&
-              mnt.approvalStatus !== "Pending" &&
+            {
+              b2bStatusVisible &&
               (
               <span
                 className={`${
-                mnt.iRakyatStatus == "C"
-                  ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
-                  : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                  mnt.iRakyatStatus == "C"
+                    ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
+                    : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
                 }`}
               >
-                {mnt.iRakyatStatus == "A" || mnt.iRakyatStatus === "CC" ? (
-                <>Active</>
-                ) : (
-                <>Complete</>
-                )}
-              </span>
-            )}          
-	        </div>
-        ) : 
-        mnt.iBizRakyatYN ? (
-          <div className="flex justify-center items-center">
-            {startDate <= today &&
-              mnt.iBizRakyatStatus !== "" &&
-              mnt.approvalStatus !== "Pending"&&
-              (
-              <span
-                className={`${
-                mnt.iBizRakyatStatus == "C"
-                  ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
-                  : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
-                }`}
-              >
-                {mnt.iBizRakyatStatus == "A" || mnt.iBizRakyatStatus === "CC" ? (
-                <>Active</>
-                ) : (
-                <>Complete</>
-                )}
+                {
+                  startDate <= today && (mnt.iRakyatStatus === "A") ? (
+                    <>Active</>
+                  ) : (mnt.iRakyatStatus == "C") ? (
+                    <>Completed</>
+                  ) : <></>
+                }
               </span>
             )}
           </div>
         ) : (
-          <></>
+          mnt.iBizRakyatYN ? (
+            <div className="flex justify-center items-center">
+              {
+                b2cStatusVisible &&
+                (
+                <span
+                  className={`${
+                    mnt.iBizRakyatStatus == "C"
+                      ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
+                      : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                  }`}
+                >
+                  {
+                    startDate <= today && (mnt.iBizRakyatStatus === "A") ? (
+                      <>Active</>
+                    ) : (mnt.iBizRakyatStatus == "C") ? (
+                      <>Completed</>
+                    ) : <></>
+                  }
+                </span>
+              )}
+            </div>
+          ) : (
+            <></>
+          )
         )
-      }
+      )}
     </div>
   );
 };
@@ -339,7 +360,7 @@ export default function SystemMaintenanceTable({
 }: {
   data: SysMaintenance[];
   hide: boolean;
-  onClick: () => void;
+  onClick: (sorting?: SortingState) => void;
 }) {
   return (
     <Table

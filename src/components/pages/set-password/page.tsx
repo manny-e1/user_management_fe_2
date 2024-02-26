@@ -50,7 +50,7 @@ export default function SetPasswordPage() {
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
     if (password !== confirmPassword) {
-      setErr("passwords don't match");
+      setErr("Password not matching");
       return;
     }
 
@@ -122,6 +122,7 @@ export default function SetPasswordPage() {
               password={confirmPassword}
               setPassword={setConfirmPassword}
               placeholder="Confirm new password"
+              comparePassword={password}
             />
 
             {err?.includes('match') && <p className="text-red-500">{err}</p>}

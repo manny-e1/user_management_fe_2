@@ -51,7 +51,7 @@ export default function EmailInput({
           ? 'h-12 form-control focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)] outline-none'
           : portal
           ? 'form-control disabled:bg-slate-50'
-          : 'border rounded p-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none h-12 placeholder-lg md:w-96 w-full'
+          : 'border rounded p-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none h-12 placeholder-lg w-full'
       }
       title="Example valid email will be xxxxx@xxxxx.xxx with an @ sign and a . sign"
       required
