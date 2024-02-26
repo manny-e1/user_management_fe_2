@@ -139,7 +139,8 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
                 </>
               )}
 
-            {user?.role === "normal user 2" &&
+            {user?.role === "normal user 2" && 
+              ((mnt.iRakyatYN && mnt.iRakyatStatus != "A") || (mnt.iBizRakyatYN && mnt.iBizRakyatStatus != "A")) && 
               (mnt.submissionStatus === "New" || mnt.submissionStatus === "Edited") &&
               mnt.approvalStatus === "Pending" && (
                 <span

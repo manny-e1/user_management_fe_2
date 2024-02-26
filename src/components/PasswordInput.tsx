@@ -35,7 +35,13 @@ export default function PasswordInput({
       event.target.setCustomValidity('Invalid input.\n' + event.target.validationMessage);
     }
     else if (inputValue.length < 8){
-      event.target.setCustomValidity('Password must have at least 8 characters.\nNew Password is less than minimum length.\n' + event.target.validationMessage);
+      
+      if (pathname.includes('/change-password') || pathname.includes('/set-password')){
+        event.target.setCustomValidity('Password must have at least 8 characters.\nNew Password is less than minimum length.\n' + event.target.validationMessage);
+      }
+      else {
+        event.target.setCustomValidity('Password must have at least 8 characters.\n' + event.target.validationMessage);
+      }
     }
     else if (!strRegex.test(inputValue)) {
 
