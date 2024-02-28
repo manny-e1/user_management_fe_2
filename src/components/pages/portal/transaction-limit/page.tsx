@@ -8,6 +8,7 @@ import { usePermission } from "@/hooks/usePermission";
 import { TxnLimit, getTxnLogs } from "@/service/transaction-limit";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { formatCurrency, removeComma, validateNumberInput } from '@/helper';
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import moment from "moment";
@@ -41,7 +42,7 @@ export default function TransactionLimitPage() {
     ];
     const bottomColumnNames: any[] = [
       "No.#",
-      "Date Time",
+      "Submit Date & Time",
       "RIB",
       "RMB",
       "CIB",
@@ -76,20 +77,20 @@ export default function TransactionLimitPage() {
       });
     }
 
-    console.log(sortField, sortDesc, sorting);
+    //console.log(sortField, sortDesc, sorting);
 
     data.forEach((row) => {
       const rowData: any = [];
       rowData.push(row.tid);
       rowData.push(moment(row.createdAt).format("YYYY-MM-DD hh:mm A"));
-      rowData.push(row.cRIB);
-      rowData.push(row.cRMB);
-      rowData.push(row.cCIB);
-      rowData.push(row.cCMB);
-      rowData.push(row.nRIB);
-      rowData.push(row.nRMB);
-      rowData.push(row.nCIB);
-      rowData.push(row.nCMB);
+      rowData.push(formatCurrency(Number(row.cRIB)));
+      rowData.push(formatCurrency(Number(row.cRMB)));
+      rowData.push(formatCurrency(Number(row.cCIB)));
+      rowData.push(formatCurrency(Number(row.cCMB)));
+      rowData.push(formatCurrency(Number(row.nRIB)));
+      rowData.push(formatCurrency(Number(row.nRMB)));
+      rowData.push(formatCurrency(Number(row.nCIB)));
+      rowData.push(formatCurrency(Number(row.nCMB)));
       rowData.push(
         row.status == 0 ? "Pending" : row.status == 1 ? "Approved" : "Rejected"
       );
@@ -97,7 +98,6 @@ export default function TransactionLimitPage() {
     });
 
     const newData = [topColumnNames, bottomColumnNames, ...rows];
-
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.json_to_sheet(newData, {
       skipHeader: true,

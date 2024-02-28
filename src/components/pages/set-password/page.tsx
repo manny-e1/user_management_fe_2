@@ -129,13 +129,20 @@ export default function SetPasswordPage() {
           </div>
 
           <div className="flex justify-center items-center mt-3">
+            <Link
+              href="/login"
+              as="/login"
+              className="px-4 py-2.5 rounded font-normal text-lg text-white bg-gray-500 hover:bg-gray-600 mr-2"
+            >
+              Cancel
+            </Link>
             <button
               type="submit"
               id="≈btnSubmitForgotEmail"
               className="px-4 py-2.5 disabled:cursor-not-allowed disabled:opacity-50 rounded font-normal text-lg text-white bg-blue-500 hover:bg-blue-600 mr-2"
               disabled={resetPwdMut.isLoading}
             >
-              Update
+              Submit
             </button>
           </div>
         </form>
