@@ -154,7 +154,7 @@ export default function GroupForm({
             id="btnBackToUserList"
             className="disabled:opacity-50 disabled:cursor-not-allowed text-white bg-[#6c757d] hover:bg-[#5c636a] rounded-[0.2rem] px-[0.85rem] py-[0.3rem] focus:shadow-[0_0_0_0.2rem_rgba(130,138,145,.5)]"
           >
-            Back
+            Cancel
           </button>
           <button
             disabled={

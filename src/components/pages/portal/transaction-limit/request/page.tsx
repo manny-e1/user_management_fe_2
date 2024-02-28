@@ -120,7 +120,7 @@ export default function RequestTransactionPage() {
         outerTitle="OBW Transaction Limit Maintenance"
         innerTitle="New Request - Transaction Limit"
       >
-        {requestTxnMut.isSuccess && <p>{JSON.stringify(requestTxnMut.data)}</p>}
+        {/* {requestTxnMut.isSuccess && <p>{JSON.stringify(requestTxnMut.data)}</p>} */}
         <form
           id="frmRequestTxn"
           onSubmit={handleSubmit}

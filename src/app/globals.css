@@ -110,3 +110,20 @@
     @apply text-lg;
   }
 }
+
+tr:nth-child(1) > th:nth-child(3).isTxnTable.border-r-2.border-b-2.border-slate-200 > div.flex.justify-between.items-center,
+tr:nth-child(1) > th:nth-child(4).isTxnTable.border-r-2.border-b-2.border-slate-200 > div.flex.justify-between.items-center {
+  justify-content: center;
+}
+
+.cust-form-control {
+  font-size: 0.665rem;
+  line-height: 1.0;
+  padding: 0.3rem 0.5rem;
+}
+
+.cust-status-filter {
+  font-size: 0.665rem;
+  padding: 0.3rem 0.5rem;
+  height: 28px;
+}

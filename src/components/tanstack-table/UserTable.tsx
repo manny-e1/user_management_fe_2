@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { userListingColums } from '@/lib/user-listing-columns';
 import Table from '@/components/tanstack-table/Table';
 import { Person } from '@/lib/user-listing-columns';
@@ -94,10 +94,10 @@ function Actions({ id, status, email }: Action) {
     Swal.fire({
       title: 'Success!',
       html: `<p>
-          An email is sent to the user to reset the password
+          An email is sent to the user to reset the password.
           <br />
           <br />
-          *Current passwords remain valid until reset password complete
+          Please note that current passwords remain valid until reset password complete.
         </p>`,
       icon: 'success',
     }).then(() => {

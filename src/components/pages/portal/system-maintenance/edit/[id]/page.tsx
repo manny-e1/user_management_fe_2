@@ -93,7 +93,7 @@ export default function EditMaintenancePage() {
       queryClient.invalidateQueries({ queryKey: ['system-maintenance'] });
       await Swal.fire({
         title: 'Success!',
-        text: 'You’ve successfully sent the request for approval.',
+        text: 'Youâ€™ve successfully sent the request for approval.',
         icon: 'success',
       });
     },

@@ -149,6 +149,15 @@ export default function Table<T extends { id: string }>({
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  let numberOfFilteredRow = 0;
+  for (const key in table.getRowModel().rowsById) {
+    if (table.getRowModel().rowsById.hasOwnProperty(key)) {
+      numberOfFilteredRow++;
+    }
+  }
+  //console.log(table.getHeaderGroups())
+  
   return (
     <div className="p-2  overflow-x-scroll no-scrollbar text-[13px] md:text-sm text-[#495057]">
       <div className="flex justify-between mb-3">
@@ -242,6 +251,7 @@ export default function Table<T extends { id: string }>({
                       key={header.id}
                       colSpan={header.colSpan}
                       className={`${
+                        isTxnTable ? 'isTxnTable border-r-2 border-b-2  border-slate-200' : 
                         !header.isPlaceholder &&
                         'border-r-2 border-b-2  border-slate-200'
                       } px-4 p-1.5 font-semibold border-l-2`}
@@ -254,6 +264,7 @@ export default function Table<T extends { id: string }>({
                               : '',
                             onClick: header.column.getToggleSortingHandler(),
                           }}
+
                           className="flex justify-between items-center"
                         >
                           {flexRender(
@@ -308,33 +319,54 @@ export default function Table<T extends { id: string }>({
       <div className="flex flex-col md:flex-row justify-between items-center gap-2 overflow-x-scroll no-scrollbar">
         <span className="flex items-center gap-1">
           <p>
-            Showing{' '}
-            {!data.length
-              ? 0
-              : table.getState().pagination.pageIndex *
-                  table.getState().pagination.pageSize +
-                1}{' '}
-            to{' '}
-            {!data.length
-              ? 0
-              : table.getPageCount() ===
-                table.getState().pagination.pageIndex + 1
-              ? table.getState().pagination.pageIndex *
-                  table.getState().pagination.pageSize +
-                +(data.length / table.getState().pagination.pageSize)
-                  .toFixed(1)
-                  .split('.')[1]
-              : table.getState().pagination.pageSize *
-                (table.getState().pagination.pageIndex + 1)}{' '}
-            of {data.length} entries
+            {(table.getState().globalFilter.fromDate == "" && table.getState().globalFilter.toDate == "" && 
+              table.getState().globalFilter.requestStatus == "" && table.getState().globalFilter.maintenanceStatus == "") || 
+              table.getState().globalFilter == "" ? (
+              <>
+                Showing{' '}
+                {!data.length
+                  ? 0
+                  : table.getState().pagination.pageIndex *
+                      table.getState().pagination.pageSize +
+                    1}{' '}
+                to{' '}
+                {!data.length
+                  ? 0
+                  : table.getPageCount() ===
+                    table.getState().pagination.pageIndex + 1
+                  ? table.getState().pagination.pageIndex *
+                      table.getState().pagination.pageSize +
+                    +(data.length / table.getState().pagination.pageSize)
+                      .toFixed(1)
+                      .split('.')[1]
+                  : table.getState().pagination.pageSize *
+                    (table.getState().pagination.pageIndex + 1)
+                }{' '}
+                of {data.length} entries
+              </> 
+              ) : (
+                <>
+                {/* isFilter */}
+                Showing{' '}
+                {!numberOfFilteredRow ? 0 : (table.getState().pagination.pageIndex * 10) + 1}{' '}to{' '}
+                {!data.length
+                  ? 0
+                  : (table.getState().pagination.pageIndex * 10) + table.getRowModel().rows.length
+                }{' '}
+                of {' '}
+                {numberOfFilteredRow} entries (filtered from {data.length} total entries)
+              </> 
+              )
+            }
           </p>
         </span>
+      
         <div className="flex gap-2">
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            previous
+            Previous
           </button>
           <p className="px-3 py-1 bg-slate-300 flex justify-center items-center border ">
             {table.getState().pagination.pageIndex + 1}
@@ -343,7 +375,7 @@ export default function Table<T extends { id: string }>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            next
+            Next
           </button>
         </div>
       </div>
@@ -364,7 +396,7 @@ function FilterStatus({ onChange }: { onChange: (value: string) => void }) {
 
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="filterStatus">status:</label>
+      <label htmlFor="filterStatus">Status:</label>
       <select
         name="filterStatus"
         id="filterStatus"
@@ -457,43 +489,45 @@ function MntFilterStatus({
   };
 
   return (
-    <div className="flex items-center overflow-x-auto scrollbar-thumb-indigo-200 scrollbar-thin scrollbar-thumb-rounded-md scrollbar-track-slate-50 gap-2">
+    // <div className="flex items-center overflow-x-auto scrollbar-thumb-indigo-200 scrollbar-thin scrollbar-thumb-rounded-md scrollbar-track-slate-50 gap-2b text-xs w-4/6">
+    <div className="flex items-center gap-2b text-xs">
       <div className="flex items-center">
-        <span className="inline-block">From Date:</span>
+        <span className="inline-block whitespace-nowrap">From Date:</span>
         <input
           type="date"
-          className="form-control"
+          className="form-control cust-form-control mx-1"
           value={input.fromDate}
           onChange={(e) => handleFromDateChange(e.target.value)}
         />
       </div>
 
       <div className="flex items-center">
-        <span className="inline-block">To Date:</span>
+        <span className="inline-block whitespace-nowrap">To Date:</span>
         <input
           type="date"
-          className="form-control"
+          className="form-control cust-form-control mx-1"
           value={input.toDate}
           onChange={(e) => handleToDateChange(e.target.value)}
         />
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center mr-3">
         <button
           className="text-white bg-gray-900 rounded-[0.2rem] px-[0.85rem] py-1 active:bg-gray-700"
+          style={{ marginTop: '1px' }}
           onClick={() => handleClearClick()}
         >
           Clear
         </button>
       </div>
 
-      <label htmlFor="filterStatus">Request Status:</label>
+      <label htmlFor="filterStatus whitespace-nowrap">Request Status:</label>
       <select
         name="filterStatus"
         id="filterStatus"
         value={input.requestStatus}
         onChange={(e) => handleRequestStatusChange(e.target.value)}
-        className="status-filter"
+        className="status-filter cust-status-filter mx-1"
       >
         <option value=""></option>
         <option value="Pending">Pending</option>
@@ -501,13 +535,13 @@ function MntFilterStatus({
         <option value="Rejected">Rejected</option>
       </select>
 
-      <label htmlFor="mntFilterStatus">Maintenance Status:</label>
+      <label htmlFor="mntFilterStatus whitespace-nowrap">Maintenance Status:</label>
       <select
         name="mntFilterStatus"
         id="mntFilterStatus"
         value={input.maintenanceStatus}
         onChange={(e) => handleMaintenanceStatusChange(e.target.value)}
-        className="status-filter"
+        className="status-filter cust-status-filter mx-1"
       >
         <option value=""></option>
         <option value="A">Active</option>
