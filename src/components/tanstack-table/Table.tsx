@@ -319,43 +319,29 @@ export default function Table<T extends { id: string }>({
       <div className="flex flex-col md:flex-row justify-between items-center gap-2 overflow-x-scroll no-scrollbar">
         <span className="flex items-center gap-1">
           <p>
+            Showing{' '}
+            {!data.length 
+              ? 0 
+              : !numberOfFilteredRow ? 0 
+              : (table.getState().pagination.pageIndex * 10) + 1
+            }{' '}
+            to{' '}
+            {!data.length 
+              ? 0 
+              : (table.getState().pagination.pageIndex * 10) + table.getRowModel().rows.length
+            }{' '}
             {(table.getState().globalFilter.fromDate == "" && table.getState().globalFilter.toDate == "" && 
               table.getState().globalFilter.requestStatus == "" && table.getState().globalFilter.maintenanceStatus == "") || 
               table.getState().globalFilter == "" ? (
-              <>
-                Showing{' '}
-                {!data.length
-                  ? 0
-                  : table.getState().pagination.pageIndex *
-                      table.getState().pagination.pageSize +
-                    1}{' '}
-                to{' '}
-                {!data.length
-                  ? 0
-                  : table.getPageCount() ===
-                    table.getState().pagination.pageIndex + 1
-                  ? table.getState().pagination.pageIndex *
-                      table.getState().pagination.pageSize +
-                    +(data.length / table.getState().pagination.pageSize)
-                      .toFixed(1)
-                      .split('.')[1]
-                  : table.getState().pagination.pageSize *
-                    (table.getState().pagination.pageIndex + 1)
-                }{' '}
-                of {data.length} entries
-              </> 
-              ) : (
                 <>
-                {/* isFilter */}
-                Showing{' '}
-                {!numberOfFilteredRow ? 0 : (table.getState().pagination.pageIndex * 10) + 1}{' '}to{' '}
-                {!data.length
-                  ? 0
-                  : (table.getState().pagination.pageIndex * 10) + table.getRowModel().rows.length
-                }{' '}
-                of {' '}
-                {numberOfFilteredRow} entries (filtered from {data.length} total entries)
-              </> 
+                  of {data.length} entries
+                </> 
+              ) : (
+                  <>
+                  {/* isFilter */}
+                  of {' '}
+                  {numberOfFilteredRow} entries (filtered from {data.length} total entries)
+                </> 
               )
             }
           </p>
