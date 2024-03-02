@@ -69,6 +69,11 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         deleteMut.mutate({ id });
+        Swal.fire({
+          title: 'Success!',
+          text: "You've successfully sent the request for approval",
+          icon: 'success',
+        })
       }
     });
   };
