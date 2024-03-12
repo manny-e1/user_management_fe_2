@@ -8,6 +8,8 @@ export type SysMaintenance = {
   submittedBy: string;
   startDate: Date | string;
   endDate: Date | string;
+  extendedStartDate: Date | string;
+  extendedEndDate: Date | string;
   iRakyatYN: boolean;
   iBizRakyatYN: boolean;
   iRakyatCN?: boolean;

@@ -42,7 +42,7 @@ export default function EditMaintenancePage() {
   usePwdValidityQuery(user?.id);
 
   const mntLogsQry = useQuery({
-    queryKey: ["system-maintenance"],
+    queryKey: ['system-maintenance'],
     queryFn: getMntLogs,
     refetchOnWindowFocus: false,
   });
@@ -143,10 +143,16 @@ export default function EditMaintenancePage() {
         const data = getMntQry.data.mntLog;
         setMntLog(data);
         setMntInput({
-          fromDate: moment(new Date(data.startDate)).format('YYYY-MM-DD'),
-          fromTime: moment(new Date(data.startDate)).format('HH:mm'),
-          toDate: moment(new Date(data.endDate)).format('YYYY-MM-DD'),
-          toTime: moment(new Date(data.endDate)).format('HH:mm'),
+          fromDate: moment(data.extendedStartDate || data.startDate).format(
+            'YYYY-MM-DD'
+          ),
+          fromTime: moment(data.extendedStartDate || data.startDate).format(
+            'HH:mm'
+          ),
+          toDate: moment(data.extendedEndDate || data.endDate).format(
+            'YYYY-MM-DD'
+          ),
+          toTime: moment(data.extendedEndDate || data.endDate).format('HH:mm'),
           iRakyat: data.iRakyatYN,
           iBizRakyat: data.iBizRakyatYN,
           minDate: '',
@@ -154,9 +160,11 @@ export default function EditMaintenancePage() {
         });
 
         const today = new Date().toISOString();
-        const startDate = new Date(getMntQry.data.mntLog.startDate).toISOString();
-        if(startDate <= today) setIsStartDate(true);
-        if(today <= startDate) setIsNotYetStartDate(true);
+        const startDate = new Date(
+          getMntQry.data.mntLog.startDate
+        ).toISOString();
+        if (startDate <= today) setIsStartDate(true);
+        if (today <= startDate) setIsNotYetStartDate(true);
       }
     }
   }, [getMntQry.data]);
@@ -175,10 +183,14 @@ export default function EditMaintenancePage() {
 
   const submitForm = async () => {
     let mntLogs: SysMaintenance[] = [];
-    if (mntLogsQry.data && "mntLogs" in mntLogsQry.data)
+    if (mntLogsQry.data && 'mntLogs' in mntLogsQry.data)
       mntLogs = mntLogsQry.data?.mntLogs ?? [];
-    const startDate = new Date(mntInput.fromDate + " " + mntInput.fromTime).toISOString();
-    const endDate = new Date(mntInput.toDate + " " + mntInput.toTime).toISOString();
+    const startDate = new Date(
+      mntInput.fromDate + ' ' + mntInput.fromTime
+    ).toISOString();
+    const endDate = new Date(
+      mntInput.toDate + ' ' + mntInput.toTime
+    ).toISOString();
 
     if (mntInput.iRakyat === false && mntInput.iBizRakyat === false) {
       await Swal.fire(
@@ -191,16 +203,18 @@ export default function EditMaintenancePage() {
 
     for (let k = 0; k < mntLogs.length; ++k) {
       if (
-        ((mntInput.iRakyat && mntLogs[k].iRakyatYN) || (mntInput.iBizRakyat && mntLogs[k].iBizRakyatYN)) &&
+        ((mntInput.iRakyat && mntLogs[k].iRakyatYN) ||
+          (mntInput.iBizRakyat && mntLogs[k].iBizRakyatYN)) &&
         ((endDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
-        (startDate > mntLogs[k].startDate && startDate < mntLogs[k].endDate) ||
-        (startDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
-        (startDate < mntLogs[k].startDate && endDate > mntLogs[k].endDate))
+          (startDate > mntLogs[k].startDate &&
+            startDate < mntLogs[k].endDate) ||
+          (startDate > mntLogs[k].startDate && endDate < mntLogs[k].endDate) ||
+          (startDate < mntLogs[k].startDate && endDate > mntLogs[k].endDate))
       ) {
         await Swal.fire(
-          "Error",
-          "System maintenance schedule is overlapping.",
-          "error"
+          'Error',
+          'System maintenance schedule is overlapping.',
+          'error'
         );
         return;
       }
@@ -345,7 +359,9 @@ export default function EditMaintenancePage() {
                 <td className="font-bold px-1">To Date</td>
                 <td className="font-bold px-1">To Time</td>
                 <td className="font-bold px-1" colSpan={2}></td>
-                <td className="font-bold px-1 text-center">Maintenance Status</td>
+                <td className="font-bold px-1 text-center">
+                  Maintenance Status
+                </td>
               </tr>
               <tr>
                 <td className="pe-1">
@@ -386,7 +402,7 @@ export default function EditMaintenancePage() {
                     required
                   />
                 </td>
-                <td className="ps-3" style={{paddingInlineEnd:'2.75rem'}}>
+                <td className="ps-3" style={{ paddingInlineEnd: '2.75rem' }}>
                   <input
                     type="checkbox"
                     checked={mntInput?.iRakyat}
@@ -394,30 +410,35 @@ export default function EditMaintenancePage() {
                     className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
                   />
                   &nbsp;iRakyat
-                  {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
-                    <>
-                      {user?.role === 'normal user 2' && (
-                        <>
-                          {mntLog?.iRakyatYN &&
-                            mntLog?.iRakyatStatus == 'A' &&
-                            (mntLog?.approvalStatus == 'Approved' ||
-                              mntLog?.approvalStatus === 'Rejected' ||
-                              (mntLog?.approvalStatus == 'Pending' &&
-                                mntLog?.submissionStatus == 'Marked')) && (
-                              <div 
-                                className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer" 
-                                style={{float:'right', marginTop:'0.2rem'}}
-                                onClick={handleCompleteRakyat}
-                              >
-                                <FiCheckCircle className="me-1" />
-                              </div>
-                          )}
-                        </>
-                      )}
-                    </>
-                  )}
+                  {mntLog?.submissionStatus !== 'Delete' &&
+                    mntLog?.iBizRakyatStatus !== 'C' &&
+                    mntLog?.iRakyatStatus !== 'C' && (
+                      <>
+                        {user?.role === 'normal user 2' && (
+                          <>
+                            {mntLog?.iRakyatYN &&
+                              mntLog?.iRakyatStatus == 'A' &&
+                              (mntLog?.approvalStatus == 'Approved' ||
+                                mntLog?.approvalStatus === 'Rejected' ||
+                                (mntLog?.approvalStatus == 'Pending' &&
+                                  mntLog?.submissionStatus == 'Marked')) && (
+                                <div
+                                  className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer"
+                                  style={{
+                                    float: 'right',
+                                    marginTop: '0.2rem',
+                                  }}
+                                  onClick={handleCompleteRakyat}
+                                >
+                                  <FiCheckCircle className="me-1" />
+                                </div>
+                              )}
+                          </>
+                        )}
+                      </>
+                    )}
                 </td>
-                <td className="ps-3" style={{paddingInlineEnd:'2.75rem'}}>
+                <td className="ps-3" style={{ paddingInlineEnd: '2.75rem' }}>
                   <input
                     type="checkbox"
                     checked={mntInput?.iBizRakyat}
@@ -425,105 +446,128 @@ export default function EditMaintenancePage() {
                     className="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-sm border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10 focus:ring-0"
                   />
                   &nbsp;iBizRakyat
-                  {mntLog?.submissionStatus !== 'Delete' && mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C' && (
-                    <>
-                      {user?.role === 'normal user 2' && (
-                        <>
-                          {mntLog?.iBizRakyatYN &&
-                            mntLog?.iBizRakyatStatus == 'A' &&
-                            (mntLog?.approvalStatus == 'Approved' ||
-                              mntLog?.approvalStatus === 'Rejected' ||
-                              (mntLog?.approvalStatus == 'Pending' &&
-                                mntLog?.submissionStatus == 'Marked')) && (
-                              <div 
-                                className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer" 
-                                style={{float:'right', marginTop:'0.2rem'}}
-                                onClick={handleCompleteBizRakyat}
-                              >
-                                <FiCheckCircle className="me-1" />
-                              </div>
-                          )}
-                        </>
+                  {mntLog?.submissionStatus !== 'Delete' &&
+                    mntLog?.iBizRakyatStatus !== 'C' &&
+                    mntLog?.iRakyatStatus !== 'C' && (
+                      <>
+                        {user?.role === 'normal user 2' && (
+                          <>
+                            {mntLog?.iBizRakyatYN &&
+                              mntLog?.iBizRakyatStatus == 'A' &&
+                              (mntLog?.approvalStatus == 'Approved' ||
+                                mntLog?.approvalStatus === 'Rejected' ||
+                                (mntLog?.approvalStatus == 'Pending' &&
+                                  mntLog?.submissionStatus == 'Marked')) && (
+                                <div
+                                  className="flex items-center select-none hover:text-[#1cbb8c] cursor-pointer"
+                                  style={{
+                                    float: 'right',
+                                    marginTop: '0.2rem',
+                                  }}
+                                  onClick={handleCompleteBizRakyat}
+                                >
+                                  <FiCheckCircle className="me-1" />
+                                </div>
+                              )}
+                          </>
                         )}
-                    </>
-                  )}
+                      </>
+                    )}
                 </td>
                 <td className="ps-2">
                   {mntLog?.iRakyatYN && mntLog?.iBizRakyatYN ? (
                     <div className="flex justify-center items-center">
-                      {(
+                      {
                         <span
                           className={`${
-                            mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C'
+                            mntLog?.iRakyatStatus == 'C' &&
+                            mntLog?.iBizRakyatStatus == 'C'
                               ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                              : isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iBizRakyatStatus == 'A')
-                                ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
-                                : (isNotYetStartDate && mntLog?.approvalStatus == "Approved")
-                                  ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
-                                  : ""
+                              : isStartDate &&
+                                (mntLog?.iRakyatStatus == 'A' ||
+                                  mntLog?.iBizRakyatStatus == 'A')
+                              ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              : isNotYetStartDate &&
+                                mntLog?.approvalStatus == 'Approved'
+                              ? 'bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400'
+                              : ''
                           }`}
                         >
-                          {
-                            (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') ? <>Completed</>
-                              : isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iBizRakyatStatus == 'A') ? <>Active</>
-                              : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
-                              : <></>    
-                          }
+                          {mntLog?.iRakyatStatus == 'C' &&
+                          mntLog?.iBizRakyatStatus == 'C' ? (
+                            <>Completed</>
+                          ) : isStartDate &&
+                            (mntLog?.iRakyatStatus == 'A' ||
+                              mntLog?.iBizRakyatStatus == 'A') ? (
+                            <>Active</>
+                          ) : isNotYetStartDate &&
+                            mntLog?.approvalStatus == 'Approved' ? (
+                            <>Active</>
+                          ) : (
+                            <></>
+                          )}
                         </span>
-                      )}
+                      }
                     </div>
-                  ) : 
-                    mntLog?.iRakyatYN ? (
-                      <div className="flex justify-center items-center">
-                        {(
-                          <span
-                            className={`${
-                              mntLog?.iRakyatStatus == 'C'
-                                ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                                : isStartDate && (mntLog?.iRakyatStatus == 'A')
-                                  ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
-                                  : (isNotYetStartDate && mntLog?.approvalStatus == "Approved")
-                                    ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
-                                    : ""
-                            }`}
-                          >
-                            {
-                              (mntLog?.iRakyatStatus == 'C') ? <>Completed</>
-                                : isStartDate && (mntLog?.iRakyatStatus == 'A') ? <>Active</>
-                                : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
-                                : <></>    
-                            }
-                          </span>
-                        )}
-                      </div>
-                    ) : 
-                    mntLog?.iBizRakyatYN ? (
-                      <div className="flex justify-center items-center">
-                        {(
-                          <span
-                            className={`${
-                              mntLog?.iBizRakyatStatus == 'C'
-                                ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                                : isStartDate && (mntLog?.iBizRakyatStatus == 'A')
-                                  ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
-                                  : (isNotYetStartDate && mntLog?.approvalStatus == "Approved")
-                                    ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
-                                    : ""
-                            }`}
-                          >
-                            {
-                              (mntLog?.iBizRakyatStatus == 'C') ? <>Completed</>
-                                : isStartDate && (mntLog?.iBizRakyatStatus == 'A') ? <>Active</>
-                                : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
-                                : <></>    
-                            }
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <></>
-                    )
-                  }
+                  ) : mntLog?.iRakyatYN ? (
+                    <div className="flex justify-center items-center">
+                      {
+                        <span
+                          className={`${
+                            mntLog?.iRakyatStatus == 'C'
+                              ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : isStartDate && mntLog?.iRakyatStatus == 'A'
+                              ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              : isNotYetStartDate &&
+                                mntLog?.approvalStatus == 'Approved'
+                              ? 'bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400'
+                              : ''
+                          }`}
+                        >
+                          {mntLog?.iRakyatStatus == 'C' ? (
+                            <>Completed</>
+                          ) : isStartDate && mntLog?.iRakyatStatus == 'A' ? (
+                            <>Active</>
+                          ) : isNotYetStartDate &&
+                            mntLog?.approvalStatus == 'Approved' ? (
+                            <>Active</>
+                          ) : (
+                            <></>
+                          )}
+                        </span>
+                      }
+                    </div>
+                  ) : mntLog?.iBizRakyatYN ? (
+                    <div className="flex justify-center items-center">
+                      {
+                        <span
+                          className={`${
+                            mntLog?.iBizRakyatStatus == 'C'
+                              ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
+                              : isStartDate && mntLog?.iBizRakyatStatus == 'A'
+                              ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              : isNotYetStartDate &&
+                                mntLog?.approvalStatus == 'Approved'
+                              ? 'bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400'
+                              : ''
+                          }`}
+                        >
+                          {mntLog?.iBizRakyatStatus == 'C' ? (
+                            <>Completed</>
+                          ) : isStartDate && mntLog?.iBizRakyatStatus == 'A' ? (
+                            <>Active</>
+                          ) : isNotYetStartDate &&
+                            mntLog?.approvalStatus == 'Approved' ? (
+                            <>Active</>
+                          ) : (
+                            <></>
+                          )}
+                        </span>
+                      }
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </td>
               </tr>
             </tbody>

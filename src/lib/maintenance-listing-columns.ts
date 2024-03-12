@@ -25,16 +25,22 @@ export const maintenanceListingColumns = (
       header: 'Maintenance Period',
       accessorKey: 'period',
       accessorFn: (row) => {
+        const startDate = row.extendedStartDate || row.startDate;
+        const endDate = row.extendedEndDate || row.endDate;
         return (
-          moment(row.startDate).format('YYYY-MM-DD HH:mm') +
+          moment(startDate).format('YYYY-MM-DD HH:mm') +
           '@' +
-          moment(row.endDate).format('YYYY-MM-DD HH:mm')
+          moment(endDate).format('YYYY-MM-DD HH:mm')
         );
       },
       cell: (props) =>
-        moment(props.row.original.startDate).format('DD/MM/YYYY hh:mm A') +
+        moment(
+          props.row.original.extendedStartDate || props.row.original.startDate
+        ).format('DD/MM/YYYY hh:mm A') +
         ' - ' +
-        moment(props.row.original.endDate).format('DD/MM/YYYY hh:mm A'),
+        moment(
+          props.row.original.extendedEndDate || props.row.original.endDate
+        ).format('DD/MM/YYYY hh:mm A'),
     },
     {
       enablePinning: true,
