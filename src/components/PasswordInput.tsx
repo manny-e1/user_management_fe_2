@@ -32,7 +32,7 @@ export default function PasswordInput({
     const strRegex = new RegExp(/^(?=.*[A-Za-z0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/i);
 
     if (inputValue == ""){
-      event.target.setCustomValidity('Invalid input.\n' + event.target.validationMessage);
+      event.target.setCustomValidity(event.target.validationMessage);
     }
     else if (inputValue.length < 8){
       
@@ -46,6 +46,7 @@ export default function PasswordInput({
     else if (!strRegex.test(inputValue)) {
 
       if (pathname.includes('/change-password') || pathname.includes('/set-password')){
+        
         event.target.setCustomValidity(
           'New Password need to be alphanumeric and either one of the special character allowed: !@#$%^&*\nPlease match the requested format'
         );
