@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import Table from "./Table";
 import {
@@ -265,35 +265,27 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
   const today = new Date().toISOString();
   const startDate = new Date(mnt.startDate).toISOString();
 
-  let b2bStatusVisible = mnt.iRakyatStatus === "C" || (startDate <= today && (mnt.iRakyatStatus === "A"));
-  let b2cStatusVisible = mnt.iBizRakyatStatus === "C" || (startDate <= today && (mnt.iBizRakyatStatus === "A"));
-  let b2bnb2cStatusVisible = mnt.iRakyatStatus === "C" || mnt.iBizRakyatStatus === "C" || (startDate <= today && ((mnt.iRakyatStatus === "A") && (mnt.iBizRakyatStatus === "A")));
-
-  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C"))  b2bStatusVisible = true;
-  if((mnt.approvalStatus !== "Pending" && mnt.iBizRakyatStatus === "C"))  b2cStatusVisible = true;
-  if((mnt.approvalStatus !== "Pending" && mnt.iRakyatStatus === "C" && mnt.iBizRakyatStatus === "C")) b2bnb2cStatusVisible = true;
-  //console.log(mnt);
-
   return (
     <div className="flex flex-col gap-1">
       {mnt.iRakyatYN && mnt.iBizRakyatYN ? (
         <div className="flex justify-center items-center">
-          {
-            b2bnb2cStatusVisible &&
-            (
+          {(
             <span
               className={`${
                 mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus == "C"
                   ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
-                  : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                  : (startDate <= today) && ((mnt.iRakyatStatus === "A") || (mnt.iBizRakyatStatus === "A"))
+                    ? "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500" 
+                    : (today <= startDate && mnt.approvalStatus == "Approved")
+                      ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
+                      : ""
               }`}
             >
               {
-                startDate <= today && (mnt.iRakyatStatus === "A" || mnt.iBizRakyatStatus === "A") ? (
-                  <>Active</>
-                ) : (mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus === "C") ? (
-                  <>Completed</>
-                ) : <></>
+                (mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus === "C") ? <>Completed</>
+                  : (startDate <= today) && ((mnt.iRakyatStatus === "A") || (mnt.iBizRakyatStatus === "A")) ? <>Active</>
+                  : (today <= startDate && mnt.approvalStatus == "Approved") ? <>Active</>
+                  : <></>
               }
             </span>
           )}
@@ -301,22 +293,23 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
       ) : (
         mnt.iRakyatYN ? (
           <div className="flex justify-center items-center">
-            {
-              b2bStatusVisible &&
-              (
+            {(
               <span
-                className={`${
+                className={`${ 
                   mnt.iRakyatStatus == "C"
                     ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
-                    : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                    : (startDate <= today && mnt.iRakyatStatus === "A")
+                      ? "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                      : (today <= startDate && mnt.approvalStatus == "Approved")
+                        ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
+                        : ""
                 }`}
               >
                 {
-                  startDate <= today && (mnt.iRakyatStatus === "A") ? (
-                    <>Active</>
-                  ) : (mnt.iRakyatStatus == "C") ? (
-                    <>Completed</>
-                  ) : <></>
+                  (mnt.iRakyatStatus == "C") ? <>Completed</>
+                  : (startDate <= today && mnt.iRakyatStatus === "A") ? <>Active</>
+                  : (today <= startDate && mnt.approvalStatus == "Approved") ? <>Active</>
+                  : <></>
                 }
               </span>
             )}
@@ -324,22 +317,23 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
         ) : (
           mnt.iBizRakyatYN ? (
             <div className="flex justify-center items-center">
-              {
-                b2cStatusVisible &&
-                (
+              {(
                 <span
                   className={`${
                     mnt.iBizRakyatStatus == "C"
                       ? "bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500"
-                      : "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500"
+                      : (startDate <= today && mnt.iBizRakyatStatus === "A")
+                        ? "bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500" 
+                        : (today <= startDate && mnt.approvalStatus == "Approved")
+                          ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
+                          : ""
                   }`}
                 >
                   {
-                    startDate <= today && (mnt.iBizRakyatStatus === "A") ? (
-                      <>Active</>
-                    ) : (mnt.iBizRakyatStatus == "C") ? (
-                      <>Completed</>
-                    ) : <></>
+                    (mnt.iBizRakyatStatus == "C") ? <>Completed</>
+                    : (startDate <= today && mnt.iBizRakyatStatus === "A") ? <>Active</>
+                    : (today <= startDate && mnt.approvalStatus == "Approved") ? <>Active</>
+                    : <></>
                   }
                 </span>
               )}

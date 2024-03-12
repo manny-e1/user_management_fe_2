@@ -23,10 +23,8 @@ export default function ViewMaintenancePage() {
   const params = useParams();
   const router = useRouter();
   const [isStartDate, setIsStartDate] = useState<boolean>(false);
+  const [isNotYetStartDate, setIsNotYetStartDate] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const [b2bVisible, setB2BVisible] = useState<boolean>(false);
-  const [b2cVisible, setB2CVisible] = useState<boolean>(false);
-  const [b2bnb2cVisible, setB2BnB2CVisible] = useState<boolean>(false);
   const [mntLog, setMntLog] = useState<SysMaintenance>();
 
   usePwdValidityQuery(user?.id);
@@ -93,13 +91,7 @@ export default function ViewMaintenancePage() {
         const today = new Date().toISOString();
         const startDate = new Date(getMntQry.data.mntLog.startDate).toISOString();
         if(startDate <= today) setIsStartDate(true);
-
-        setB2BVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC")));
-        setB2CVisible(getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC")));
-        setB2BnB2CVisible(getMntQry.data.mntLog.iRakyatStatus === "C" || getMntQry.data.mntLog.iBizRakyatStatus === "C" || (startDate <= today && ((getMntQry.data.mntLog.iRakyatStatus === "A" || getMntQry.data.mntLog.iRakyatStatus === "CC") && (getMntQry.data.mntLog.iBizRakyatStatus === "A" || getMntQry.data.mntLog.iBizRakyatStatus === "CC"))));
-        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C")) setB2BVisible(true);
-        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2CVisible(true);
-        if((getMntQry.data.mntLog.approvalStatus !== "Pending" && getMntQry.data.mntLog.iRakyatStatus === "C" && getMntQry.data.mntLog.iBizRakyatStatus === "C")) setB2BnB2CVisible(true);
+        if(today <= startDate) setIsNotYetStartDate(true);
       }
     }
   }, [getMntQry.data]);
@@ -331,21 +323,23 @@ export default function ViewMaintenancePage() {
               <td className="ps-2">
                 {mntLog?.iRakyatYN && mntLog?.iBizRakyatYN ? (
                   <div className="flex justify-center items-center">
-                    { 
-                      b2bnb2cVisible && 
-                      (
+                    {(
                       <span
                         className={`${
                           mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C'
                             ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                            : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                            : isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iBizRakyatStatus == 'A')
+                              ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              : (isNotYetStartDate && mntLog?.approvalStatus == "Approved")
+                                ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
+                                : ""
                         }`}
                       >
-                        { isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC' || mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
-                            <>Active</>
-                          ) : (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') ? (
-                            <>Completed</>
-                          ) : <>Check1</>    
+                        {
+                          (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') ? <>Completed</>
+                            : isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iBizRakyatStatus == 'A') ? <>Active</>
+                            : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
+                            : <></>    
                         }
                       </span>
                     )}
@@ -353,21 +347,23 @@ export default function ViewMaintenancePage() {
                 ) : 
                   mntLog?.iRakyatYN ? (
                     <div className="flex justify-center items-center">
-                      {
-                        b2bVisible && 
-                        (
+                      {(
                         <span
                           className={`${
                             mntLog?.iRakyatStatus == 'C'
                               ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                              : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              : isStartDate && (mntLog?.iRakyatStatus == 'A')
+                                ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                                : (isNotYetStartDate && mntLog?.approvalStatus == "Approved")
+                                  ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
+                                  : ""
                           }`}
                         >
-                          { isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iRakyatStatus === 'CC') ? (
-                              <>Active</>
-                            ) : (mntLog?.iRakyatStatus == 'C') ? (
-                              <>Completed</>
-                            ) : <>Check2</>
+                          {
+                            (mntLog?.iRakyatStatus == 'C') ? <>Completed</>
+                              : isStartDate && (mntLog?.iRakyatStatus == 'A') ? <>Active</>
+                              : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
+                              : <></>    
                           }
                         </span>
                       )}
@@ -375,21 +371,23 @@ export default function ViewMaintenancePage() {
                   ) : 
                   mntLog?.iBizRakyatYN ? (
                     <div className="flex justify-center items-center">
-                      {
-                        b2cVisible && (
+                      {(
                         <span
                           className={`${
                             mntLog?.iBizRakyatStatus == 'C'
                               ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
-                              : 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                              : isStartDate && (mntLog?.iBizRakyatStatus == 'A')
+                                ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
+                                : (isNotYetStartDate && mntLog?.approvalStatus == "Approved")
+                                  ? "bg-yellow-400 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-yellow-400 border border-yellow-400"
+                                  : ""
                           }`}
                         >
-                          { 
-                            isStartDate && (mntLog?.iBizRakyatStatus == 'A' || mntLog?.iBizRakyatStatus === 'CC') ? (
-                              <>Active</>
-                            ) : (mntLog?.iBizRakyatStatus == 'C') ? (
-                              <>Completed</>
-                            ) : <>Check3</>
+                          {
+                            (mntLog?.iBizRakyatStatus == 'C') ? <>Completed</>
+                              : isStartDate && (mntLog?.iBizRakyatStatus == 'A') ? <>Active</>
+                              : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
+                              : <></>    
                           }
                         </span>
                       )}
