@@ -62,6 +62,12 @@ export const maintenanceListingColumns = (
           row.submissionStatus == 'Marked'
         )
           res = row.iBizRakyatStatus;
+
+        if(row.iRakyatStatus != '' && row.approvalStatus == 'Pending' && row.submissionStatus=='Edited')
+          res = row.iRakyatStatus;
+
+        if(row.iBizRakyatStatus != '' && row.approvalStatus == 'Pending' && row.submissionStatus=='Edited')
+          res = row.iBizRakyatStatus;
         return res;
       },
       enableSorting: false,
