@@ -54,14 +54,14 @@ export const maintenanceListingColumns = (
             row.approvalStatus != 'Rejected') ||
           row.submissionStatus == 'Marked'
         )
-          res += row.iRakyatStatus;
+          res = row.iRakyatStatus;
         if (
           (row.iBizRakyatStatus != '' &&
             row.approvalStatus != 'Pending' &&
             row.approvalStatus != 'Rejected') ||
           row.submissionStatus == 'Marked'
         )
-          res += row.iBizRakyatStatus;
+          res = row.iBizRakyatStatus;
         return res;
       },
       enableSorting: false,
