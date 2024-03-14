@@ -3,7 +3,7 @@ import SystemMaintenancePage from '@/components/pages/portal/system-maintenance/
 
 export const metadata:Metadata = {
 	title: 'System Maintenance',
-	description: 'System Maintenace page for user management portal'
+	description: 'System Maintenance page for user management portal'
 }
 
 export default function SystemMaintenance() {

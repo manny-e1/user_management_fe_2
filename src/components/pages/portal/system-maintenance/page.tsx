@@ -207,7 +207,7 @@ export default function SystemMaintenancePage() {
       <BreadCrumbs breadCrumbs={breadCrumbs} />
       <Section
         outerTitle="OBW System Maintenance"
-        innerTitle="System Maintenace"
+        innerTitle="System Maintenance"
       >
         <SystemMaintenanceTable
           onClick={handleExport}

@@ -337,7 +337,7 @@ export default function ViewMaintenancePage() {
                       >
                         {
                           (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') ? <>Completed</>
-                            : isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iBizRakyatStatus == 'A') ? <>Active</>
+                            : isStartDate && (mntLog?.iRakyatStatus == 'A' || mntLog?.iBizRakyatStatus == 'A') ? <>Ongoing</>
                             : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
                             : <></>    
                         }
@@ -361,7 +361,7 @@ export default function ViewMaintenancePage() {
                         >
                           {
                             (mntLog?.iRakyatStatus == 'C') ? <>Completed</>
-                              : isStartDate && (mntLog?.iRakyatStatus == 'A') ? <>Active</>
+                              : isStartDate && (mntLog?.iRakyatStatus == 'A') ? <>Ongoing</>
                               : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
                               : <></>    
                           }
@@ -385,7 +385,7 @@ export default function ViewMaintenancePage() {
                         >
                           {
                             (mntLog?.iBizRakyatStatus == 'C') ? <>Completed</>
-                              : isStartDate && (mntLog?.iBizRakyatStatus == 'A') ? <>Active</>
+                              : isStartDate && (mntLog?.iBizRakyatStatus == 'A') ? <>Ongoing</>
                               : (isNotYetStartDate && mntLog?.approvalStatus == 'Approved') ? <>Active</>
                               : <></>    
                           }
