@@ -70,7 +70,7 @@ export default function Topbar() {
         {(user?.role === 'normal user 2' || user?.role === 'manager 2') && (
           <Dropdown.Item className="flex gap-2 items-center">
             <SlSettings size={18} className="text-black font-bold" />
-            System Maintenace
+            System Maintenance
           </Dropdown.Item>
         )}
         <Dropdown.Item>

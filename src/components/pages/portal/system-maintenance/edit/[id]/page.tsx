@@ -499,7 +499,7 @@ export default function EditMaintenancePage() {
                           ) : isStartDate &&
                             (mntLog?.iRakyatStatus == 'A' ||
                               mntLog?.iBizRakyatStatus == 'A') ? (
-                            <>Active</>
+                            <>Ongoing</>
                           ) : isNotYetStartDate &&
                             mntLog?.approvalStatus == 'Approved' ? (
                             <>Active</>
@@ -527,7 +527,7 @@ export default function EditMaintenancePage() {
                           {mntLog?.iRakyatStatus == 'C' ? (
                             <>Completed</>
                           ) : isStartDate && mntLog?.iRakyatStatus == 'A' ? (
-                            <>Active</>
+                            <>Ongoing</>
                           ) : isNotYetStartDate &&
                             mntLog?.approvalStatus == 'Approved' ? (
                             <>Active</>
@@ -555,7 +555,7 @@ export default function EditMaintenancePage() {
                           {mntLog?.iBizRakyatStatus == 'C' ? (
                             <>Completed</>
                           ) : isStartDate && mntLog?.iBizRakyatStatus == 'A' ? (
-                            <>Active</>
+                            <>Ongoing</>
                           ) : isNotYetStartDate &&
                             mntLog?.approvalStatus == 'Approved' ? (
                             <>Active</>

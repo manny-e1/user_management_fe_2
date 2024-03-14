@@ -191,6 +191,13 @@ export default function Table<T extends { id: string }>({
                   toDate: value,
                 });
               }}
+              onClear={(value) => {
+                setMntFilter({
+                  ...mntFilter,
+                  fromDate: value,
+                  toDate: value,
+                });
+              }}
             />
           ) : (
             <>
@@ -408,11 +415,13 @@ function MntFilterStatus({
   onMntChange,
   onFromChange,
   onToChange,
+  onClear,
 }: {
   onReqChange: (value: string) => void;
   onMntChange: (value: string) => void;
   onFromChange: (value: string) => void;
   onToChange: (value: string) => void;
+  onClear: (value: string) => void;
 }) {
   const [input, setInput] = useState<MaintenanceFilter>({
     fromDate: '',
@@ -471,8 +480,7 @@ function MntFilterStatus({
       fromDate: '',
       toDate: '',
     });
-    onFromChange('');
-    onToChange('');
+    onClear('');
   };
 
   return (
@@ -531,7 +539,8 @@ function MntFilterStatus({
         className="status-filter cust-status-filter mx-1"
       >
         <option value=""></option>
-        <option value="A">Active</option>
+        <option value="I">Active</option>
+        <option value="A">Ongoing</option>
         <option value="C">Completed</option>
       </select>
     </div>
