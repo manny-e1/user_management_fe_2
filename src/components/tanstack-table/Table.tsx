@@ -71,7 +71,8 @@ const mntStatusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     row.getValue('channelStatus'),
     maintenanceStatus
   );
-  //console.log(row);
+  
+  console.log("DEBUG BUG==>",row);
 
   const period = row.getValue('period') as string;
   const startDate = new Date(period.split('@')[0]);
