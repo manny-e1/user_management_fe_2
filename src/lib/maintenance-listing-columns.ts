@@ -131,6 +131,17 @@ export const maintenanceListingColumns = (
 
         if(row.iBizRakyatStatus != '' && row.approvalStatus == 'Rejected' && row.submissionStatus=='Edited')
           res += row.iBizRakyatStatus;
+
+        const currentDate = new Date();
+        const period = row.period as string;
+        const startDate = new Date(period.split('@')[0]);
+
+        if(row.iBizRakyatYN && currentDate < startDate){
+          res += 'I';
+        }
+        if(row.iRakyatYN && currentDate < startDate){
+          res += 'I';
+        }
         
         return res;
       },

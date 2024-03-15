@@ -2,6 +2,7 @@ import { API_URL } from '@/lib/config';
 import { MessageResponse } from './user';
 import { getHeader } from '@/helper';
 export type SysMaintenance = {
+  period: string;
   id: string;
   mid: number;
   submittedAt: Date | string;
