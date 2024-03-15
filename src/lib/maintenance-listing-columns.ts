@@ -135,10 +135,10 @@ export const maintenanceListingColumns = (
         const currentDate = new Date();
         const startDate = new Date(row.startDate);
 
-        if(row.iBizRakyatYN && currentDate < startDate){
+        if(row.iBizRakyatStatus != '' && row.iBizRakyatYN && currentDate < startDate){
           res += 'I';
         }
-        if(row.iRakyatYN && currentDate < startDate){
+        if( row.iRakyatStatus != ''  && row.iRakyatYN && currentDate < startDate){
           res += 'I';
         }
         
