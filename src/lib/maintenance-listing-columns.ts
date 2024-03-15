@@ -133,7 +133,8 @@ export const maintenanceListingColumns = (
           res += row.iBizRakyatStatus;
 
         const currentDate = new Date();
-        const period = row.period as string;
+        const period = row.period;
+        
         const startDate = new Date(period.split('@')[0]);
 
         if(row.iBizRakyatYN && currentDate < startDate){
