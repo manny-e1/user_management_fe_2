@@ -480,8 +480,8 @@ export default function EditMaintenancePage() {
                       {
                         <span
                           className={`${
-                            mntLog?.iRakyatStatus == 'C' &&
-                            mntLog?.iBizRakyatStatus == 'C'
+                            (mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') && 
+                            !((mntLog?.submissionStatus == 'New' || mntLog?.submissionStatus == 'Delete') && (mntLog?.approvalStatus == 'Pending' || mntLog?.approvalStatus == 'Rejected'))
                               ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
                               : isStartDate &&
                                 (mntLog?.iRakyatStatus == 'A' ||
@@ -493,8 +493,8 @@ export default function EditMaintenancePage() {
                               : ''
                           }`}
                         >
-                          {mntLog?.iRakyatStatus == 'C' &&
-                          mntLog?.iBizRakyatStatus == 'C' ? (
+                          {(mntLog?.iRakyatStatus == 'C' && mntLog?.iBizRakyatStatus == 'C') && 
+                          !((mntLog?.submissionStatus == 'New' || mntLog?.submissionStatus == 'Delete') && (mntLog?.approvalStatus == 'Pending' || mntLog?.approvalStatus == 'Rejected')) ? (
                             <>Completed</>
                           ) : isStartDate &&
                             (mntLog?.iRakyatStatus == 'A' ||
@@ -514,7 +514,7 @@ export default function EditMaintenancePage() {
                       {
                         <span
                           className={`${
-                            mntLog?.iRakyatStatus == 'C'
+                            mntLog?.iRakyatStatus == 'C' && !((mntLog?.submissionStatus == 'New' || mntLog?.submissionStatus == 'Delete') && (mntLog?.approvalStatus == 'Pending' || mntLog?.approvalStatus == 'Rejected'))
                               ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
                               : isStartDate && mntLog?.iRakyatStatus == 'A'
                               ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
@@ -524,7 +524,7 @@ export default function EditMaintenancePage() {
                               : ''
                           }`}
                         >
-                          {mntLog?.iRakyatStatus == 'C' ? (
+                          {mntLog?.iRakyatStatus == 'C' && !((mntLog?.submissionStatus == 'New' || mntLog?.submissionStatus == 'Delete') && (mntLog?.approvalStatus == 'Pending' || mntLog?.approvalStatus == 'Rejected')) ? (
                             <>Completed</>
                           ) : isStartDate && mntLog?.iRakyatStatus == 'A' ? (
                             <>Ongoing</>
@@ -542,7 +542,8 @@ export default function EditMaintenancePage() {
                       {
                         <span
                           className={`${
-                            mntLog?.iBizRakyatStatus == 'C'
+                            mntLog?.iBizRakyatStatus == 'C' &&
+                            !((mntLog?.submissionStatus == 'New' || mntLog?.submissionStatus == 'Delete') && (mntLog?.approvalStatus == 'Pending' || mntLog?.approvalStatus == 'Rejected'))
                               ? 'bg-gray-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
                               : isStartDate && mntLog?.iBizRakyatStatus == 'A'
                               ? 'bg-green-500 text-white text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
@@ -552,7 +553,8 @@ export default function EditMaintenancePage() {
                               : ''
                           }`}
                         >
-                          {mntLog?.iBizRakyatStatus == 'C' ? (
+                          {mntLog?.iBizRakyatStatus == 'C' && 
+                          !((mntLog?.submissionStatus == 'New' || mntLog?.submissionStatus == 'Delete') && (mntLog?.approvalStatus == 'Pending' || mntLog?.approvalStatus == 'Rejected')) ? (
                             <>Completed</>
                           ) : isStartDate && mntLog?.iBizRakyatStatus == 'A' ? (
                             <>Ongoing</>

@@ -68,7 +68,7 @@ const mntStatusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     requestStatus
   );
   const maintenanceStatusRank = rankItem(
-    row.getValue('channelStatus'),
+    row.getValue('maintenanceStatus'),
     maintenanceStatus
   );
   
