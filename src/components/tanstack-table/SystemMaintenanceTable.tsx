@@ -18,8 +18,7 @@ import { SortingState } from '@tanstack/react-table';
 const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
   const { id } = mnt;
   const user = usePermission();
-  let b2cChannelStatus = mnt.iRakyatStatus;
-  let b2bChannelStatus = mnt.iBizRakyatStatus;
+  let channelStatus = mnt.iRakyatStatus + mnt.iBizRakyatStatus;
 
   const queryClient = useQueryClient();
 
@@ -131,7 +130,7 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
         (mnt.iBizRakyatStatus !== 'C' || mnt.iRakyatStatus !== 'C') && (
           <>
             {user?.role == 'normal user 2' &&
-              (b2cChannelStatus.indexOf('C') == -1 && b2bChannelStatus.indexOf('C') == -1) && (
+              (channelStatus.indexOf('C') == -1) && (
                 <>
                   <Link
                     href={`/portal/system-maintenance/edit/${id}`}
@@ -142,10 +141,12 @@ const Actions = ({ mnt }: { mnt: SysMaintenance }) => {
                 </>
               )}
 
-            {user?.role === 'normal user 2' && 
-              (b2cChannelStatus.indexOf('C') == -1 && b2bChannelStatus.indexOf('C') == -1) &&
-              ((mnt.iRakyatYN && mnt.iRakyatStatus != 'A') || (mnt.iBizRakyatYN && mnt.iBizRakyatStatus != 'A')) && 
-              ((mnt.submissionStatus === 'New' || mnt.submissionStatus === 'Edited') && mnt.approvalStatus === 'Pending') && (
+            {user?.role === 'normal user 2' && channelStatus.indexOf('C') == -1 &&
+              ((mnt.iRakyatYN && mnt.iRakyatStatus != 'A') ||
+                (mnt.iBizRakyatYN && mnt.iBizRakyatStatus != 'A')) &&
+              (mnt.submissionStatus === 'New' ||
+                mnt.submissionStatus === 'Edited') &&
+              mnt.approvalStatus === 'Pending' && (
                 <span
                   onClick={handleDeleteClick}
                   className="text-blue-500 cursor-pointer"
@@ -268,7 +269,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
           {
             <span
               className={`${
-                mnt.iRakyatStatus == 'C' && mnt.iBizRakyatStatus == 'C'
+                (mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus == "C") && !((mnt.submissionStatus == 'New' || mnt.submissionStatus == 'Delete') && (mnt.approvalStatus == 'Pending' || mnt.approvalStatus == 'Rejected'))
                   ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
                   : startDate <= today &&
                     (mnt.iRakyatStatus === 'A' || mnt.iBizRakyatStatus === 'A')
@@ -278,7 +279,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
                   : ''
               }`}
             >
-              {mnt.iRakyatStatus == 'C' && mnt.iBizRakyatStatus === 'C' ? (
+              {(mnt.iRakyatStatus == "C" && mnt.iBizRakyatStatus == "C") && !((mnt.submissionStatus == 'New' || mnt.submissionStatus == 'Delete') && (mnt.approvalStatus == 'Pending' || mnt.approvalStatus == 'Rejected')) ? (
                 <>Completed</>
               ) : startDate <= today &&
                 (mnt.iRakyatStatus === 'A' || mnt.iBizRakyatStatus === 'A') ? (
@@ -296,7 +297,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
           {
             <span
               className={`${
-                mnt.iRakyatStatus == 'C'
+                mnt.iRakyatStatus == "C" && !((mnt.submissionStatus == 'New' || mnt.submissionStatus == 'Delete') && (mnt.approvalStatus == 'Pending' || mnt.approvalStatus == 'Rejected'))
                   ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
                   : startDate <= today && mnt.iRakyatStatus === 'A'
                   ? 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
@@ -305,7 +306,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
                   : ''
               }`}
             >
-              {mnt.iRakyatStatus == 'C' ? (
+              {mnt.iRakyatStatus == "C" && !((mnt.submissionStatus == 'New' || mnt.submissionStatus == 'Delete') && (mnt.approvalStatus == 'Pending' || mnt.approvalStatus == 'Rejected')) ? (
                 <>Completed</>
               ) : startDate <= today && mnt.iRakyatStatus === 'A' ? (
                 <>Ongoing</>
@@ -322,7 +323,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
           {
             <span
               className={`${
-                mnt.iBizRakyatStatus == 'C'
+                mnt.iBizRakyatStatus == "C" && !((mnt.submissionStatus == 'New' || mnt.submissionStatus == 'Delete') && (mnt.approvalStatus == 'Pending' || mnt.approvalStatus == 'Rejected'))
                   ? 'bg-gray-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-gray-500 border border-gray-500'
                   : startDate <= today && mnt.iBizRakyatStatus === 'A'
                   ? 'bg-green-500 text-white text-xs font-medium mr-1 px-2.5 py-0.5 rounded-full dark:bg-green-500 border border-green-500'
@@ -331,7 +332,7 @@ const Status = ({ mnt }: { mnt: SysMaintenance }) => {
                   : ''
               }`}
             >
-              {mnt.iBizRakyatStatus == 'C' ? (
+              {mnt.iBizRakyatStatus == "C" && !((mnt.submissionStatus == 'New' || mnt.submissionStatus == 'Delete') && (mnt.approvalStatus == 'Pending' || mnt.approvalStatus == 'Rejected')) ? (
                 <>Completed</>
               ) : startDate <= today && mnt.iBizRakyatStatus === 'A' ? (
                 <>Ongoing</>
