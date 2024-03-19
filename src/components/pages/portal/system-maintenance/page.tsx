@@ -260,14 +260,6 @@ export default function SystemMaintenancePage() {
                   <td className="pl-1">Marked</td>
                   <td>: Marked as completed if complete earlier than actual scheduled time.</td>
                 </tr>
-                <tr>
-                  <td className="pl-1">RTP</td>
-                  <td>: Real-Time Payment.</td>
-                </tr>
-                <tr>
-                  <td className="pl-1">CS</td>
-                  <td>: Consent (AutoDebit)</td>
-                </tr>
               </tbody>
             </table>
           </fieldset>
