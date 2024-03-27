@@ -158,7 +158,7 @@ export default function Table<T extends { id: string }>({
     }
   }
   //console.log(table.getHeaderGroups())
-  
+
   return (
     <div className="p-2  overflow-x-scroll no-scrollbar text-[13px] md:text-sm text-[#495057]">
       <div className="flex justify-between mb-3">
@@ -217,13 +217,13 @@ export default function Table<T extends { id: string }>({
             <>
               {!isUserTable ? (
                 !isUserGroupTable ? (
-                <button
-                  id="btnExport"
-                  onClick={() => onClick && onClick(sorting)}
-                  className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
-                >
-                  Export
-                </button>
+                  <button
+                    id="btnExport"
+                    onClick={() => onClick && onClick(sorting)}
+                    className="text-white bg-green-500 hover:bg-green-600 rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(188,240,218 ,.5)]"
+                  >
+                    Export
+                  </button>
                 ) : (
                   <></>
                 )
@@ -236,8 +236,11 @@ export default function Table<T extends { id: string }>({
                   onClick={(e) => router.push(route)}
                   className="text-white bg-[#3b7ddd] hover:bg-[#326abc] rounded-[0.2rem] px-[0.85rem] py-1 focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)]"
                 >
-                  { isTxnTable ? '+ New Request' : 
-                    isMntTable ? '+ Create Schedule': '+ Add' }
+                  {isTxnTable
+                    ? '+ New Request'
+                    : isMntTable
+                    ? '+ Create Schedule'
+                    : '+ Add'}
                 </button>
               ) : (
                 <></>
@@ -259,9 +262,10 @@ export default function Table<T extends { id: string }>({
                       key={header.id}
                       colSpan={header.colSpan}
                       className={`${
-                        isTxnTable ? 'isTxnTable border-r-2 border-b-2  border-slate-200' : 
-                        !header.isPlaceholder &&
-                        'border-r-2 border-b-2  border-slate-200'
+                        isTxnTable
+                          ? 'isTxnTable border-r-2 border-b-2  border-slate-200'
+                          : !header.isPlaceholder &&
+                            'border-r-2 border-b-2  border-slate-200'
                       } px-4 p-1.5 font-semibold border-l-2`}
                     >
                       {header.isPlaceholder ? null : (
@@ -272,7 +276,6 @@ export default function Table<T extends { id: string }>({
                               : '',
                             onClick: header.column.getToggleSortingHandler(),
                           }}
-
                           className="flex justify-between items-center"
                         >
                           {flexRender(
@@ -328,33 +331,32 @@ export default function Table<T extends { id: string }>({
         <span className="flex items-center gap-1">
           <p>
             Showing{' '}
-            {!data.length 
-              ? 0 
-              : !numberOfFilteredRow ? 0 
-              : (table.getState().pagination.pageIndex * 10) + 1
-            }{' '}
+            {!data.length
+              ? 0
+              : !numberOfFilteredRow
+              ? 0
+              : table.getState().pagination.pageIndex * 10 + 1}{' '}
             to{' '}
-            {!data.length 
-              ? 0 
-              : (table.getState().pagination.pageIndex * 10) + table.getRowModel().rows.length
-            }{' '}
-            {(table.getState().globalFilter.fromDate == "" && table.getState().globalFilter.toDate == "" && 
-              table.getState().globalFilter.requestStatus == "" && table.getState().globalFilter.maintenanceStatus == "") || 
-              table.getState().globalFilter == "" ? (
-                <>
-                  of {data.length} entries
-                </> 
-              ) : (
-                  <>
-                  {/* isFilter */}
-                  of {' '}
-                  {numberOfFilteredRow} entries (filtered from {data.length} total entries)
-                </> 
-              )
-            }
+            {!data.length
+              ? 0
+              : table.getState().pagination.pageIndex * 10 +
+                table.getRowModel().rows.length}{' '}
+            {(table.getState().globalFilter.fromDate == '' &&
+              table.getState().globalFilter.toDate == '' &&
+              table.getState().globalFilter.requestStatus == '' &&
+              table.getState().globalFilter.maintenanceStatus == '') ||
+            table.getState().globalFilter == '' ? (
+              <>of {data.length} entries</>
+            ) : (
+              <>
+                {/* isFilter */}
+                of {numberOfFilteredRow} entries (filtered from {data.length}{' '}
+                total entries)
+              </>
+            )}
           </p>
         </span>
-      
+
         <div className="flex gap-2">
           <button
             onClick={() => table.previousPage()}
@@ -530,7 +532,9 @@ function MntFilterStatus({
         <option value="Rejected">Rejected</option>
       </select>
 
-      <label htmlFor="mntFilterStatus whitespace-nowrap">Maintenance Status:</label>
+      <label htmlFor="mntFilterStatus whitespace-nowrap">
+        Maintenance Status:
+      </label>
       <select
         name="mntFilterStatus"
         id="mntFilterStatus"
