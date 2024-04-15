@@ -16,7 +16,7 @@ export function useSessionTimeout() {
 
     const resetTimer = () => {
       clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(logout, 1000 * 60 * 15);
+      inactivityTimer = setTimeout(logout, 1000 * 60 * 10);
     };
 
     const logout = () => {
