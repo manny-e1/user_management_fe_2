@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
     if (!emailRegex.test(email)) {
       setErr('Please enter a valid email');
     }
-    forgotPwdMut.mutate(email);
+    forgotPwdMut.mutate({ email, activate: false });
   };
 
   return (

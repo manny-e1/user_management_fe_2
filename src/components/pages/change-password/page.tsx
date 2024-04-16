@@ -51,7 +51,7 @@ export default function ChangePasswordPage() {
   const handleSubmit = (evt: FormEvent) => {
     evt.preventDefault();
     if (password !== confirmPassword) {
-      setErr("Password not matching");
+      setErr('Password not matching');
       return;
     }
     setErr('');

@@ -90,18 +90,22 @@ function Actions({ id, status, email }: Action) {
     });
   };
 
-  const handlePwdReset = () => {
+  const handlePwdReset = (status: Status) => {
     Swal.fire({
       title: 'Success!',
       html: `<p>
           An email is sent to the user to reset the password.
+          ${
+            status === 'active'
+              ? `<br />
           <br />
-          <br />
-          Please note that current passwords remain valid until reset password complete.
+          Please note that current passwords remain valid until reset password complete.`
+              : ''
+          }
         </p>`,
       icon: 'success',
     }).then(() => {
-      pwdResetMut.mutate(email);
+      pwdResetMut.mutate({ email, activate: status === 'locked' });
     });
   };
 
@@ -114,36 +118,41 @@ function Actions({ id, status, email }: Action) {
             className="aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
             aria-disabled={statusChangeMut.isLoading}
           >
-            <LuEdit size={18} className="text-blue-500" title='Edit' />
+            <LuEdit
+              size={18}
+              className="text-blue-500 hover:text-blue-600"
+              title="Edit"
+            />
           </Link>
           <LuTrash2
             size={18}
-            title='Delete'
+            title="Delete"
             onClick={handleDeleteUser}
-            className="text-red-500 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+            className="text-red-500 hover:text-red-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
             aria-disabled={statusChangeMut.isLoading}
           />
           <TfiReload
             size={18}
-            title='Password Reset'
-            onClick={handlePwdReset}
-            className="text-grey-500 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+            title="Password Reset"
+            onClick={() => handlePwdReset('active')}
+            className="text-gray-500 hover:text-gray-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
             aria-disabled={statusChangeMut.isLoading}
           />
           <LuPauseCircle
             size={18}
-            title='Active/Lock'
+            title="Active/Lock"
             onClick={handleStatusChange}
             aria-disabled={statusChangeMut.isLoading}
-            className="text-orange-500 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+            className="text-orange-500 hover:text-orange-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
           />
         </div>
       ) : (
-        <LuPlayCircle
+        <TfiReload
           size={18}
-          className="text-green-500 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 hover:cursor-pointer"
+          title="Password Reset"
+          onClick={() => handlePwdReset('locked')}
+          className="text-gray-500 hover:cursor-pointer hover:text-gray-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
           aria-disabled={statusChangeMut.isLoading}
-          onClick={handleStatusChange}
         />
       )}
       {err.showModal && (
@@ -163,9 +172,9 @@ function actions({ id, status, email }: Action) {
 
 export default function UserTable({
   data,
-  onClick
+  onClick,
 }: {
-  data: User[],
+  data: User[];
   onClick: (sorting?: SortingState) => void;
 }) {
   return (
