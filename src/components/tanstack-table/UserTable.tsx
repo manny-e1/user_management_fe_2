@@ -149,7 +149,6 @@ function Actions({ id, status, email }: Action) {
       ) : (
         <TfiReload
           size={18}
-          title="Active"
           title="Password Reset"
           onClick={() => handlePwdReset('locked')}
           className="text-gray-500 hover:cursor-pointer hover:text-gray-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
