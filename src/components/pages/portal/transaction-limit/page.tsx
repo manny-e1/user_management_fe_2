@@ -118,7 +118,7 @@ export default function TransactionLimitPage() {
       };
     }) ?? [];
 
-  const breadCrumbs = [{ name: "MANAGEMENT" }, { name: "Transation Limit" }];
+  const breadCrumbs = [{ name: "MANAGEMENT" }, { name: "Transaction Limit" }];
   return (
     <div className="p-4 text-[#495057] no-scrollbar">
       <BreadCrumbs breadCrumbs={breadCrumbs} />

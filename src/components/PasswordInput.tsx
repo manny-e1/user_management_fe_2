@@ -21,6 +21,7 @@ export default function PasswordInput({
   comparePassword?: string;
 }) {
   const [valid, setValid] = useState(true);
+  const [confirmNewPwd, setConfirmNewPwd] = useState(false);
   const pathname = usePathname();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -28,47 +29,31 @@ export default function PasswordInput({
     setPassword(() => inputValue);
     setValid(() => event.target.checkValidity());
     event.target.setCustomValidity('');
+    if (id == 'cfmpwd' || id == 'confpwd' || id == 'scfmpwd') setConfirmNewPwd(true);
 
     const strRegex = new RegExp(/^(?=.*[A-Za-z0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/i);
 
-    if (inputValue == ""){
-      event.target.setCustomValidity(event.target.validationMessage);
-    }
-    else if (inputValue.length < 8){
-      
-      if (pathname.includes('/change-password') || pathname.includes('/set-password')){
-        event.target.setCustomValidity('Password must have at least 8 characters.\nNew Password is less than minimum length.\n' + event.target.validationMessage);
-      }
-      else {
-        event.target.setCustomValidity('Password must have at least 8 characters.\n' + event.target.validationMessage);
-      }
-    }
-    else if (!strRegex.test(inputValue)) {
-
-      if (pathname.includes('/change-password') || pathname.includes('/set-password')){
-        
-        event.target.setCustomValidity(
-          'New Password need to be alphanumeric and either one of the special character allowed: !@#$%^&*\nPlease match the requested format'
-        );
-      }
-      else {
-        event.target.setCustomValidity(
-          'Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character and at least 8 or more characters.'
-        );
-      }
-
-    } 
-    else if(comparePassword !== undefined){
-      if (pathname.includes('/change-password') || pathname.includes('/set-password')){
-        if (comparePassword !== null){
-          if (event.currentTarget.value !== comparePassword){
-            event.currentTarget.setCustomValidity('Confirm Password not matching');
-          }
+    if (!pathname.includes('/login')){
+      if (inputValue == ""){
+        event.target.setCustomValidity(event.target.validationMessage);
+      } else if (!confirmNewPwd && inputValue.length < 8){
+        if (id == 'newPwd' || id == 'newpwd' || id == 'snewpwd'){
+          // New Password
+          event.target.setCustomValidity('Password must have at least 8 characters.\nNew Password is less than minimum length.\n' + event.target.validationMessage);
+        } else {
+          event.target.setCustomValidity('Password must have at least 8 characters.\n' + event.target.validationMessage);
         }
+      } else if (!confirmNewPwd && !strRegex.test(inputValue)) {
+        if (id == 'newPwd' || id == 'newpwd' || id == 'snewpwd'){
+          event.target.setCustomValidity('New Password need to be alphanumeric and either one of the special character allowed: !@#$%^&*\nPlease match the requested format');
+        } else {
+          event.target.setCustomValidity('Password need to be alphanumeric and either one of the special character allowed: !@#$%^&*\nPlease match the requested format');
+        }
+      } else if (confirmNewPwd && event.currentTarget.value !== comparePassword){
+        event.currentTarget.setCustomValidity('Confirm Password not matching');
+      } else {
+        event.target.setCustomValidity('');
       }
-    }
-    else {
-      event.target.setCustomValidity('');
     }
   };
 
@@ -92,7 +77,6 @@ export default function PasswordInput({
           ? 'form-control'
           : 'border rounded p-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none h-12 placeholder-lg md:w-96 w-full'
       }
-      title="Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
       required
     />
   );

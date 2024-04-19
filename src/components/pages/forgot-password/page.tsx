@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
   return (
     <main className="flex flex-col pt-4 md:w-full  bg-forgotten items-center  h-screen">
       <Image
-        src="/BR Logo Black Tagline.png"
+        src="/BR Logo White Tagline.png"
         width={300}
         height={80}
         alt="Bank Logo"

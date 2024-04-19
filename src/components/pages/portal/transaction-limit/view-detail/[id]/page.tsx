@@ -131,7 +131,7 @@ export default function ViewTransactionPage() {
     });
   };
 
-  const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'Transation Limit' }];
+  const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'Transaction Limit' }];
   return (
     <div className="p-4 overflow-y-scroll">
       <BreadCrumbs breadCrumbs={breadCrumbs} />

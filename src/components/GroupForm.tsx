@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-query';
 import Modal from './Modal';
 import Swal from 'sweetalert2';
+import AlphanumericInput from '@/components/AlphanumericInput';
 
 export default function GroupForm({
   edit,
@@ -112,15 +113,12 @@ export default function GroupForm({
             <label htmlFor="txtName" className="mb-2">
               Group Name
             </label>
-            <input
-              type="text"
-              className="form-control disabled:bg-slate-50"
+            <AlphanumericInput
               id="txtName"
-              placeholder={edit ? '' : 'Name'}
               value={name}
+              setValue={setName}
               disabled={edit}
-              onChange={(e) => setName(e.target.value)}
-              required
+              placeholder={edit ? '' : 'Name'}
             />
           </div>
           <div className="pb-5 w-full space-y-2">

@@ -69,7 +69,7 @@ export default function SigninPage() {
   return (
     <main className="flex items-center justify-center h-screen">
       <div className="flex flex-col items-center px-3 w-full">
-        <h1 className="text-3xl font-medium mb-2">Welcome back</h1>
+        <h1 className="text-3xl font-medium mb-2 text-center">Welcome Back to DOBW Admin Portal</h1>
         <p className="pb-6 font-light text-[1.09375rem]">
           Sign in to your account to continue
         </p>
@@ -77,7 +77,7 @@ export default function SigninPage() {
         <div className="border rounded md:p-10 p-4 md:w-1/3 w-full shadow-[0_0_0.875rem_0_rgba(33,37,41,.05)]">
           <div className="flex justify-center mb-4 ">
             <Image
-              src="/BR Logo Black Tagline.png"
+              src="/BR Logo White Tagline.png"
               alt=""
               width={150}
               height={80}

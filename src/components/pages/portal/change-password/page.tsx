@@ -131,7 +131,7 @@ export default function ChangePasswordPortalPage() {
                 placeholder="Confirm new password"
                 comparePassword={newPwd}
               />
-              {err?.includes('match') && <p className="text-red-500">{err}</p>}
+              {/* {err?.includes('match') && <p className="text-red-500">{err}</p>} */}
               {/* <div id="CheckPasswordMatch" className="col-sm-8 mt-[1px]"></div> */}
             </div>
           </div>

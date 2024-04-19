@@ -146,6 +146,7 @@ export default function RequestMaintenancePage() {
 
     for (let i = 0; i < rows.length; ++i) {
       const item = rows[i];
+      const today = new Date().toISOString();
       const startDate = new Date(item.fromDate + " " + item.fromTime).toISOString();
       const endDate = new Date(item.toDate + " " + item.toTime).toISOString();
       data.push({
@@ -160,6 +161,15 @@ export default function RequestMaintenancePage() {
         await Swal.fire(
           "Error",
           "You must select at least one channel per maintenance.",
+          "error"
+        );
+        return;
+      }
+
+      if (today > item.fromDate) {
+        await Swal.fire(
+          "Error",
+          "You must select a future date.",
           "error"
         );
         return;

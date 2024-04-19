@@ -52,8 +52,8 @@ export default function Sidebar() {
       <ul className={sidebarCollapsed ? 'overflow-hidden -z-10' : ''}>
         <li className="relative max-w-full h-20  py-5 px-5 mb-4">
           <Image
-            src="/BR Logo Black Tagline.png"
-            alt="BR Logo Black Tagline"
+            src="/BR Logo White Tagline.png"
+            alt="BR Logo White Tagline"
             fill
           />
         </li>

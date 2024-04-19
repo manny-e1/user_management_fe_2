@@ -29,7 +29,7 @@ export default function UserGroupsPage() {
     const sortDesc = (sorting?.length ? sorting[0].desc : false) == false ? 1 : -1;
     const topColumnNames: any[] = ['No.#', 'Group Name', 'Role'];
 
-    console.log(sortField, sortDesc);
+    //console.log(sortField, sortDesc);
     
     let data:UserGroup[] = [];
     if (userGroups) {

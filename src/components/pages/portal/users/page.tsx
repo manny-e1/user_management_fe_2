@@ -38,7 +38,7 @@ export default function UsersPage() {
     const sortDesc = (sorting?.length ? sorting[0].desc : false) == false ? 1 : -1;
     const topColumnNames: any[] = ['No.#', 'Name', 'Email', 'Staff Id', 'User group', 'Status'];
 
-    console.log(sortField, sortDesc);
+    //console.log(sortField, sortDesc);
     
     let data:User[] = [];
     if (users) {

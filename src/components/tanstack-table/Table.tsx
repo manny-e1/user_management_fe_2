@@ -403,7 +403,7 @@ function FilterStatus({ onChange }: { onChange: (value: string) => void }) {
         }}
         className="status-filter"
       >
-        <option value=""></option>
+        <option value="">All</option>
         <option value="0">Pending</option>
         <option value="1">Approved</option>
         <option value="-">Rejected</option>
@@ -526,7 +526,7 @@ function MntFilterStatus({
         onChange={(e) => handleRequestStatusChange(e.target.value)}
         className="status-filter cust-status-filter mx-1"
       >
-        <option value=""></option>
+        <option value="">All</option>
         <option value="Pending">Pending</option>
         <option value="Approved">Approved</option>
         <option value="Rejected">Rejected</option>
@@ -542,7 +542,7 @@ function MntFilterStatus({
         onChange={(e) => handleMaintenanceStatusChange(e.target.value)}
         className="status-filter cust-status-filter mx-1"
       >
-        <option value=""></option>
+        <option value="">All</option>
         <option value="I">Active</option>
         <option value="A">Ongoing</option>
         <option value="C">Completed</option>

@@ -26,6 +26,11 @@ export default function ViewMaintenancePage() {
   const [isNotYetStartDate, setIsNotYetStartDate] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [mntLog, setMntLog] = useState<SysMaintenance>();
+  let visibility = mntLog?.iBizRakyatStatus !== 'C' && mntLog?.iRakyatStatus !== 'C'
+  if (
+    (mntLog?.iBizRakyatStatus === 'C' || mntLog?.iRakyatStatus === 'C') &&
+    mntLog.approvalStatus === 'Pending'
+  ) visibility = true;
 
   usePwdValidityQuery(user?.id);
 
@@ -429,11 +434,10 @@ export default function ViewMaintenancePage() {
               Cancel
             </button>
           </Link>
-          {user?.role === 'manager 2' &&
-            mntLog?.approvalStatus != 'Approved' &&
-            mntLog?.approvalStatus != 'Rejected' &&
-            mntLog?.iBizRakyatStatus !== 'C' &&
-            mntLog?.iRakyatStatus !== 'C' && (
+          {user?.role === 'manager 2' && 
+            visibility && (
+            <>
+            {mntLog?.approvalStatus == 'Pending' && (
               <>
                 <button
                   disabled={approveMut.isLoading || rejectMut.isLoading}
@@ -455,6 +459,8 @@ export default function ViewMaintenancePage() {
                 </button>
               </>
             )}
+            </>
+          )}
         </div>
 
         <RejectionModal id={id} visible={visible} setVisible={setVisible} />

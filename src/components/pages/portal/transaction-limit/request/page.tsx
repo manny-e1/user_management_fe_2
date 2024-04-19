@@ -112,7 +112,7 @@ export default function RequestTransactionPage() {
     });
   };
 
-  const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'Transation Limit' }];
+  const breadCrumbs = [{ name: 'MANAGEMENT' }, { name: 'Transaction Limit' }];
   return (
     <div className="p-4">
       <BreadCrumbs breadCrumbs={breadCrumbs} />

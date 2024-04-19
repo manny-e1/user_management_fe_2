@@ -92,7 +92,7 @@ export default function SetPasswordPage() {
   return (
     <main className="flex flex-col pt-4 md:w-full  bg-forgotten items-center  h-screen">
       <Image
-        src="/BR Logo Black Tagline.png"
+        src="/BR Logo White Tagline.png"
         width={300}
         height={80}
         alt="Bank Logo"
@@ -125,7 +125,7 @@ export default function SetPasswordPage() {
               comparePassword={password}
             />
 
-            {err?.includes('match') && <p className="text-red-500">{err}</p>}
+            {/* {err?.includes('match') && <p className="text-red-500">{err}</p>} */}
           </div>
 
           <div className="flex justify-center items-center mt-3">
