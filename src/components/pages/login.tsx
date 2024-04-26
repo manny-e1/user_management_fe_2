@@ -10,9 +10,9 @@ import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
-import PasswordInput from '../PasswordInput';
 import EmailInput from '../EmailInput';
 import secureLocalStorage from 'react-secure-storage';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function SigninPage() {
   usePermission();
@@ -21,6 +21,7 @@ export default function SigninPage() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const loginMut = useMutation({
     mutationFn: login,
@@ -102,14 +103,28 @@ export default function SigninPage() {
               <label htmlFor="password" className="my-2">
                 Password
               </label>
-              <PasswordInput
-                id="password"
-                login={true}
-                password={password}
-                setPassword={setPassword}
-                placeholder="Enter your password"
-              />
-
+              <div className='relative'>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id='password'
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                  pattern=".{8,}"
+                  placeholder="Enter your password"
+                  className='h-12 form-control focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)] outline-none'
+                  required
+                />
+                <button
+                  type="button"
+                  className='absolute top-[1.0rem] right-[1.0rem]'
+                  onMouseDown={() => {setShowPassword(!showPassword)}}
+                  onMouseUp={() => {setShowPassword(!showPassword)}}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
               <small className="mb-2 w-full">
                 <Link
                   href="/forgot-password "
