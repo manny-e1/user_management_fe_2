@@ -14,7 +14,7 @@ export type User = {
 
 export type MessageResponse = { message: string } | { error: string };
 
-export type Status = 'active' | 'locked';
+export type Status = 'active' | 'locked' | 'inactive';
 
 export async function getUsers() {
   const headers = getHeader('AUTHGET');
@@ -208,6 +208,17 @@ export async function checkCurrentPassword(body: {
     method: 'POST',
     body: JSON.stringify(body),
     headers: authHeader.headers,
+  });
+  const data: MessageResponse = await res.json();
+  return data;
+}
+
+export async function resendActivationEmail(email: string) {
+  const normalHeader = getHeader('AUTHPOST');
+  const res = await fetch(`${API_URL}/users/resend-email`, {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+    headers: normalHeader.headers,
   });
   const data: MessageResponse = await res.json();
   return data;

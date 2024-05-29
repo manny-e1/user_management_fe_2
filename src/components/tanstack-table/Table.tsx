@@ -60,6 +60,21 @@ const statusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
+const mfaConfigStatusFilter: FilterFn<any> = (
+  row,
+  columnId,
+  value,
+  addMeta
+) => {
+  const itemRank = rankItem(row.getValue('status'), value);
+
+  addMeta({
+    itemRank,
+  });
+
+  return itemRank.passed;
+};
+
 const mntStatusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const g = value as MaintenanceFilter;
   const { requestStatus, maintenanceStatus, fromDate, toDate } = g;
@@ -71,8 +86,8 @@ const mntStatusFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     row.getValue('maintenanceStatus'),
     maintenanceStatus
   );
-  
-  console.log("DEBUG BUG==>",row);
+
+  console.log('DEBUG BUG==>', row);
 
   const period = row.getValue('period') as string;
   const startDate = new Date(period.split('@')[0]);
@@ -126,6 +141,7 @@ export default function Table<T extends { id: string }>({
   const isUserGroupTable = route.includes('user-groups');
   const isTxnTable = route.includes('transaction');
   const isMntTable = route.includes('maintenance');
+  const isMFAConfigTable = route.includes('mfa');
 
   const table = useReactTable({
     data,
@@ -164,6 +180,8 @@ export default function Table<T extends { id: string }>({
       <div className="flex justify-between mb-3">
         {isTxnTable ? (
           <FilterStatus onChange={(value) => setGlobalFilter(value)} />
+        ) : isMFAConfigTable ? (
+          <MFAConfigFilterStatus onChange={(value) => setGlobalFilter(value)} />
         ) : !hideUtility ? (
           isMntTable ? (
             <MntFilterStatus
@@ -407,6 +425,35 @@ function FilterStatus({ onChange }: { onChange: (value: string) => void }) {
         <option value="0">Pending</option>
         <option value="1">Approved</option>
         <option value="-">Rejected</option>
+      </select>
+    </div>
+  );
+}
+
+function MFAConfigFilterStatus({
+  onChange,
+}: {
+  onChange: (value: string) => void;
+}) {
+  const [status, setStatus] = useState<string>('');
+
+  return (
+    <div className="flex items-center gap-2">
+      <label htmlFor="filterStatus">Status:</label>
+      <select
+        name="filterStatus"
+        id="filterStatus"
+        value={status}
+        onChange={(e) => {
+          setStatus(e.target.value);
+          onChange(e.target.value);
+        }}
+        className="status-filter"
+      >
+        <option value="">All</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
       </select>
     </div>
   );

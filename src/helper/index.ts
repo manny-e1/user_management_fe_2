@@ -59,3 +59,9 @@ export function getHeader(type: 'AUTHPOST' | 'AUTHGET' | 'NORMALPOST') {
     headers,
   };
 }
+
+export function capitalizeFirstLetter(sentence: string) {
+  return sentence.replace(/\w\S*/g, (word) => {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  });
+}
