@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import { cookies } from 'next/dist/client/components/headers';
 
 export function capitalizeEveryWord(str?: string) {
   return str?.replace(/\b\w/g, (match) => match.toUpperCase());
@@ -44,10 +45,12 @@ export function formatDate(date?: Date) {
 export function getHeader(
   type: 'AUTHPOST' | 'AUTHGET' | 'NORMALPOST' | 'FORMDATA'
 ) {
+  const rememberMe = Cookies.get('rememberMe');
   const token =
-    Cookies.get('rememberMe') === 'no'
+    !rememberMe || rememberMe === 'no'
       ? sessionStorage.getItem('token')
       : Cookies.get('token');
+
   const headers: { Authorization?: string; 'Content-Type'?: string } = {};
   if (type === 'AUTHPOST') {
     headers['Content-Type'] = 'application/json';

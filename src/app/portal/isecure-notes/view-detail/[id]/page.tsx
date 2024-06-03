@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: 'View i-Secure note page for admin portal',
 };
 
-export default function ViewTransaction() {
+export default function ViewISecureNote() {
   return <ViewISecureNotePage />;
 }

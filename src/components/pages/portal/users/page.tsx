@@ -1,25 +1,21 @@
 'use client';
 import BreadCrumbs from '@/components/BreadCrumbs';
-import { User, getUsers } from '@/service/user';
+import { User } from '@/service/user';
 import UserTable from '@/components/tanstack-table/UserTable';
 import Section from '@/components/Section';
-import { useQuery } from '@tanstack/react-query';
 import { usePermission } from '@/hooks/usePermission';
 import { usePwdValidityQuery } from '@/hooks/useCheckPwdValidityQuery';
 import { SortingState } from '@tanstack/react-table';
 
 import * as XLSX from 'xlsx';
+import { useUsersQuery } from '@/hooks/useUsersQuery';
 // import Modal from '@/components/Modal';
 
 export default function UsersPage() {
   const user = usePermission();
   // const [error, setError] = useState<string | null>(null);
   usePwdValidityQuery(user?.id);
-  const usersQry = useQuery({
-    queryKey: ['users'],
-    queryFn: getUsers,
-    refetchOnWindowFocus: false,
-  });
+  const usersQry = useUsersQuery();
 
   const breadCrumbs = [
     { name: 'MANAGEMENT' },
@@ -35,15 +31,23 @@ export default function UsersPage() {
   const handleExport = (sorting?: SortingState) => {
     const rows: any[] = [];
     const sortField = sorting?.length ? sorting[0].id : '';
-    const sortDesc = (sorting?.length ? sorting[0].desc : false) == false ? 1 : -1;
-    const topColumnNames: any[] = ['No.#', 'Name', 'Email', 'Staff Id', 'User group', 'Status'];
+    const sortDesc =
+      (sorting?.length ? sorting[0].desc : false) == false ? 1 : -1;
+    const topColumnNames: any[] = [
+      'No.#',
+      'Name',
+      'Email',
+      'Staff Id',
+      'User group',
+      'Status',
+    ];
 
     //console.log(sortField, sortDesc);
-    
-    let data:User[] = [];
+
+    let data: User[] = [];
     if (users) {
       data = users.sort((a: User, b: User) => {
-        if (sortField === 'idx')  return a.idx - b.idx;
+        if (sortField === 'idx') return a.idx - b.idx;
         else if (sortField === 'name')
           return a.name.localeCompare(b.name) * sortDesc;
         else if (sortField === 'email')
@@ -77,7 +81,7 @@ export default function UsersPage() {
     });
     XLSX.utils.book_append_sheet(wb, ws, 'MySheet');
     XLSX.writeFile(wb, 'Users.xlsx');
-  }
+  };
 
   return (
     <div className="p-4 no-scrollbar">
