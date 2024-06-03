@@ -7,7 +7,6 @@ import { reviewMFAConfig, getMFAConfigById } from '@/service/mfa-config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Swal from 'sweetalert2';
 
 export default function ViewMFAConfigPage() {

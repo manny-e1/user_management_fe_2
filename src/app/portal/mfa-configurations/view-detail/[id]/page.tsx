@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: 'View mfa configuration page for admin portal',
 };
 
-export default function ViewTransaction() {
+export default function ViewMFAConfig() {
   return <ViewMFAConfigPage />;
 }

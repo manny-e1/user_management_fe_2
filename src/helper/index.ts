@@ -41,7 +41,9 @@ export function formatDate(date?: Date) {
   return formattedDate;
 }
 
-export function getHeader(type: 'AUTHPOST' | 'AUTHGET' | 'NORMALPOST') {
+export function getHeader(
+  type: 'AUTHPOST' | 'AUTHGET' | 'NORMALPOST' | 'FORMDATA'
+) {
   const token =
     Cookies.get('rememberMe') === 'no'
       ? sessionStorage.getItem('token')
@@ -49,6 +51,8 @@ export function getHeader(type: 'AUTHPOST' | 'AUTHGET' | 'NORMALPOST') {
   const headers: { Authorization?: string; 'Content-Type'?: string } = {};
   if (type === 'AUTHPOST') {
     headers['Content-Type'] = 'application/json';
+    headers.Authorization = `Bearer ${token}`;
+  } else if (type === 'FORMDATA') {
     headers.Authorization = `Bearer ${token}`;
   } else if (type === 'AUTHGET') {
     headers.Authorization = `Bearer ${token}`;

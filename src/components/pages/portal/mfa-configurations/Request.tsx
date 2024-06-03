@@ -24,10 +24,6 @@ export default function RequestMFAConfigPage() {
   const [nSMS, setNSMS] = useState('');
   const [nMO, setNMO] = useState('');
   const [nMA, setNMA] = useState('');
-  const [err, setErr] = useState<{ error: string | null; showModal: boolean }>({
-    error: null,
-    showModal: false,
-  });
   const queryClient = useQueryClient();
   const requestMFAConfigMut = useMutation({
     mutationFn: requestMFAConfig,
@@ -60,13 +56,13 @@ export default function RequestMFAConfigPage() {
   useEffect(() => {
     if (lastUpdatedValueQry.data) {
       if (!('error' in lastUpdatedValueQry.data)) {
-        const txnLog = lastUpdatedValueQry.data.mfaConfig;
-        setCSMS(txnLog.nSMS.toString());
-        setCMO(txnLog.nMO.toString());
-        setCMA(txnLog.nMA.toString());
-        setNSMS(txnLog.nSMS.toString());
-        setNMO(txnLog.nMO.toString());
-        setNMA(txnLog.nMA.toString());
+        const config = lastUpdatedValueQry.data.mfaConfig;
+        setCSMS(config.nSMS.toString());
+        setCMO(config.nMO.toString());
+        setCMA(config.nMA.toString());
+        setNSMS(config.nSMS.toString());
+        setNMO(config.nMO.toString());
+        setNMA(config.nMA.toString());
       } else {
         setNSMS('3');
         setNMO('3');
@@ -109,14 +105,14 @@ export default function RequestMFAConfigPage() {
       >
         {/* {requestTxnMut.isSuccess && <p>{JSON.stringify(requestTxnMut.data)}</p>} */}
         <form
-          id="frmRequestTxn"
+          id="frmRequestMFAConfig"
           onSubmit={handleSubmit}
           className="flex flex-wrap text-sm mx-[calc(var(--bs-gutter-x)*-.5)] mt-[calc(var(--bs-gutter-y)*-1)] needs-validation space-y-2"
         >
           <div className="w-full flex gap-1 max-md:flex-wrap">
             <div className="flex flex-wrap w-full space-y-1">
               <label
-                htmlFor="rib"
+                htmlFor="nMO"
                 className="py-[calc(0.3rem_+_1px)] px-[calc(var(--bs-gutter-x)*.5)]  w-full"
               >
                 i-Secure Mobile Authorization
@@ -124,7 +120,7 @@ export default function RequestMFAConfigPage() {
               <div className=" px-[calc(var(--bs-gutter-x)*.5)]  w-full">
                 <input
                   type="text"
-                  id="rib"
+                  id="nMO"
                   className="form-control"
                   required
                   onBlur={() => setNMO(nMO)}
@@ -135,7 +131,7 @@ export default function RequestMFAConfigPage() {
             </div>
             <div className="flex flex-wrap w-full space-y-1">
               <label
-                htmlFor="rmb"
+                htmlFor="nMA"
                 className="py-[calc(0.3rem_+_1px)] px-[calc(var(--bs-gutter-x)*.5)]  w-full"
               >
                 i-Secure Mobile OTP
@@ -143,7 +139,7 @@ export default function RequestMFAConfigPage() {
               <div className=" px-[calc(var(--bs-gutter-x)*.5)]  w-full">
                 <input
                   type="text"
-                  id="rmb"
+                  id="nMA"
                   className="form-control"
                   required
                   onBlur={() => setNMA(nMA)}
@@ -157,7 +153,7 @@ export default function RequestMFAConfigPage() {
           <div className="w-full flex gap-1 max-md:flex-wrap">
             <div className="flex flex-wrap w-1/2 space-y-1">
               <label
-                htmlFor="cib"
+                htmlFor="nSMS"
                 className="py-[calc(0.3rem_+_1px)] px-[calc(var(--bs-gutter-x)*.5)]  w-full"
               >
                 SMS OTP (One-Time Password)
@@ -165,7 +161,7 @@ export default function RequestMFAConfigPage() {
               <div className="px-[calc(var(--bs-gutter-x)*.5)]  w-full">
                 <input
                   type="text"
-                  id="cib"
+                  id="nSMS"
                   className="form-control"
                   required
                   onBlur={() => setNSMS(nSMS)}
@@ -194,23 +190,6 @@ export default function RequestMFAConfigPage() {
             </button>
           </div>
         </form>
-        {err.showModal && (
-          <Modal
-            error={!!err.error}
-            message={
-              !!err.error
-                ? err.error
-                : 'Your mfa configuration request is submitted'
-            }
-            onClick={() => {
-              setErr({ error: null, showModal: false });
-              if (err.error) {
-                return;
-              }
-              router.push('/portal/mfa-configurations');
-            }}
-          />
-        )}
       </Section>
     </div>
   );

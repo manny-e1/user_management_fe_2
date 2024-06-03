@@ -127,12 +127,12 @@ function Actions({ id, status, email }: Action) {
         </p>`,
       icon: 'success',
     }).then(() => {
-      pwdResetMut.mutate({ email, activate: status === 'locked' });
+      pwdResetMut.mutate({ email });
     });
   };
 
-  const handleResentActEmail = () => {
-    pwdResetMut.mutate({ email, activate: true });
+  const handleResendActEmail = () => {
+    resendActEmailMut.mutate(email);
   };
 
   return (
@@ -200,7 +200,7 @@ function Actions({ id, status, email }: Action) {
         <FcVoicemail
           size={18}
           title="Account Activation"
-          onClick={handleResentActEmail}
+          onClick={handleResendActEmail}
           className="text-gray-500 hover:cursor-pointer hover:text-gray-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
           aria-disabled={resendActEmailMut.isLoading}
         />

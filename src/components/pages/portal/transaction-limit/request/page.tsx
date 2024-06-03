@@ -23,10 +23,6 @@ export default function RequestTransactionPage() {
   const [nCib, setNCIB] = useState('');
   const [nRmb, setNRMB] = useState('');
   const [nRib, setNRIB] = useState('');
-  const [err, setErr] = useState<{ error: string | null; showModal: boolean }>({
-    error: null,
-    showModal: false,
-  });
   const queryClient = useQueryClient();
   const requestTxnMut = useMutation({
     mutationFn: createTxnLog,
@@ -235,23 +231,6 @@ export default function RequestTransactionPage() {
             </button>
           </div>
         </form>
-        {err.showModal && (
-          <Modal
-            error={!!err.error}
-            message={
-              !!err.error
-                ? err.error
-                : 'Your transaction limit request is submitted'
-            }
-            onClick={() => {
-              setErr({ error: null, showModal: false });
-              if (err.error) {
-                return;
-              }
-              router.push('/portal/transaction-limit');
-            }}
-          />
-        )}
       </Section>
     </div>
   );

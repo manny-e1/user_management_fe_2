@@ -153,17 +153,11 @@ export async function activateUser(token: string) {
   return data;
 }
 
-export async function forgotPassword({
-  email,
-  activate,
-}: {
-  email: string;
-  activate: boolean;
-}) {
+export async function forgotPassword({ email }: { email: string }) {
   const normalHeader = getHeader('NORMALPOST');
   const res = await fetch(`${API_URL}/users/forgot-password`, {
     method: 'POST',
-    body: JSON.stringify({ email, activate }),
+    body: JSON.stringify({ email }),
     headers: normalHeader.headers,
   });
   const data: MessageResponse = await res.json();

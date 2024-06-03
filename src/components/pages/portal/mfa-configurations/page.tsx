@@ -1,20 +1,12 @@
 'use client';
 import BreadCrumbs from '@/components/BreadCrumbs';
-// import Modal from '@/components/Modal';
 import Section from '@/components/Section';
 import MFAConfigTable from '@/components/tanstack-table/MFAConfigTable';
 import { usePwdValidityQuery } from '@/hooks/useCheckPwdValidityQuery';
 import { usePermission } from '@/hooks/usePermission';
-import { TxnLimit, getTxnLogs } from '@/service/transaction-limit';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import {
-  capitalizeFirstLetter,
-  formatCurrency,
-  removeComma,
-  validateNumberInput,
-} from '@/helper';
-import { useEffect, useState } from 'react';
+import { capitalizeFirstLetter } from '@/helper';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
 import { SortingState } from '@tanstack/react-table';

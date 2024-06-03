@@ -142,6 +142,7 @@ export default function Table<T extends { id: string }>({
   const isTxnTable = route.includes('transaction');
   const isMntTable = route.includes('maintenance');
   const isMFAConfigTable = route.includes('mfa');
+  const isISecureNoteTable = route.includes('isecure');
 
   const table = useReactTable({
     data,
@@ -180,7 +181,7 @@ export default function Table<T extends { id: string }>({
       <div className="flex justify-between mb-3">
         {isTxnTable ? (
           <FilterStatus onChange={(value) => setGlobalFilter(value)} />
-        ) : isMFAConfigTable ? (
+        ) : isMFAConfigTable || isISecureNoteTable ? (
           <MFAConfigFilterStatus onChange={(value) => setGlobalFilter(value)} />
         ) : !hideUtility ? (
           isMntTable ? (

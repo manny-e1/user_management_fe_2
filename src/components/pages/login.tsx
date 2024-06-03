@@ -1,8 +1,6 @@
 'use client';
-
-import Modal from '@/components/Modal';
 import { usePermission } from '@/hooks/usePermission';
-import { changeUserStatus, login } from '@/service/user';
+import { login } from '@/service/user';
 import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,7 +9,6 @@ import { FormEvent, useState } from 'react';
 import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
 import EmailInput from '../EmailInput';
-import secureLocalStorage from 'react-secure-storage';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function SigninPage() {
@@ -20,7 +17,6 @@ export default function SigninPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const loginMut = useMutation({
@@ -70,7 +66,9 @@ export default function SigninPage() {
   return (
     <main className="flex items-center justify-center h-screen">
       <div className="flex flex-col items-center px-3 w-full">
-        <h1 className="text-3xl font-medium mb-2 text-center">Welcome Back to DOBW Admin Portal</h1>
+        <h1 className="text-3xl font-medium mb-2 text-center">
+          Welcome Back to DOBW Admin Portal
+        </h1>
         <p className="pb-6 font-light text-[1.09375rem]">
           Sign in to your account to continue
         </p>
@@ -103,24 +101,28 @@ export default function SigninPage() {
               <label htmlFor="password" className="my-2">
                 Password
               </label>
-              <div className='relative'>
+              <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  id='password'
+                  id="password"
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
                   }}
                   pattern=".{8,}"
                   placeholder="Enter your password"
-                  className='h-12 form-control focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)] outline-none'
+                  className="h-12 form-control focus:shadow-[0_0_0_0.2rem_rgba(88,145,226,.5)] outline-none"
                   required
                 />
                 <button
                   type="button"
-                  className='absolute top-[1.0rem] right-[1.0rem]'
-                  onMouseDown={() => {setShowPassword(!showPassword)}}
-                  onMouseUp={() => {setShowPassword(!showPassword)}}
+                  className="absolute top-[1.0rem] right-[1.0rem]"
+                  onMouseDown={() => {
+                    setShowPassword(!showPassword);
+                  }}
+                  onMouseUp={() => {
+                    setShowPassword(!showPassword);
+                  }}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -154,11 +156,6 @@ export default function SigninPage() {
           </form>
         </div>
       </div>
-      {error && (
-        <Modal onClick={() => setError(null)} message={error} error={true} />
-      )}
     </main>
   );
-}
-{
 }
